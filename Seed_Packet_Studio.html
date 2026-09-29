@@ -96,7 +96,6 @@ input[type=color]{height:36px; border:1.5px solid #cfcfcf; border-radius:8px; ba
   box-shadow:0 14px 34px rgba(90,70,40,.22), inset 0 0 60px rgba(190,160,110,.12);
   overflow:hidden; container-type:inline-size; user-select:none;
 }
-.flap{position:absolute; top:0; left:0; right:0; height:9%; background:linear-gradient(#e9dfc6,#ded0ae); border-bottom:1px solid #c9b98f; z-index:5;}
 .title-main{
   position:absolute; top:10.5%; left:0; right:0; text-align:center; z-index:2;
   font-family:'Cormorant Garamond',serif; font-weight:700; font-size:9.5cqw; letter-spacing:.14em; color:#5b4a3a;
@@ -124,13 +123,18 @@ input[type=color]{height:36px; border:1.5px solid #cfcfcf; border-radius:8px; ba
 .foot-bottom{position:absolute; left:6%; right:6%; bottom:4.5%; display:flex; align-items:center; gap:2.5%; z-index:2;}
 .foot-bottom .fline{min-height:3cqw;}
 /* editable text + selection */
-.editable{cursor:text; border-radius:3px; padding:0 2px;}
+.editable{cursor:text; border-radius:3px; padding:0 2px; touch-action:none;}
 .editable.selected{outline:2px solid var(--accent); outline-offset:2px; background:rgba(122,139,92,.07);}
 .editable:focus{outline:2px solid var(--accent); outline-offset:2px;}
+.editable.dragging{cursor:grabbing;}
 .textbox{position:absolute; z-index:3; font-size:5cqw; color:#5b4a3a; min-width:20%; padding:1%;}
 /* stickers */
 .sticker{position:absolute; touch-action:none; z-index:1;}
 .sticker img{width:100%; height:auto; display:block; border-radius:4px; pointer-events:none;}
+.sticker .shapeWrap{pointer-events:none; line-height:0;}
+.sticker .shapeWrap svg{width:100%; height:auto; display:block; overflow:visible;}
+.shapeThumb{display:block; width:100%; height:64px; padding:8px; box-sizing:border-box;}
+.shapeThumb svg{width:100%; height:100%; display:block;}
 .sticker .tools{position:absolute; top:-14px; right:-8px; display:none; gap:4px; z-index:20;}
 .sticker.selected .tools{display:flex;}
 .sticker .tools button{
@@ -198,16 +202,16 @@ input[type=color]{height:36px; border:1.5px solid #cfcfcf; border-radius:8px; ba
       <button class="lib-tab active" data-lib="flowers">🌸 flowers <span id="flowerCount"></span></button>
       <button class="lib-tab" data-lib="vegetables">🥕 veggies <span id="vegCount"></span></button>
       <button class="lib-tab" data-lib="clipart">🎨 clip art <span id="clipCount"></span></button>
+      <button class="lib-tab" data-lib="shapes">✏️ shapes <span id="shapeCount"></span></button>
     </div>
     <div class="thumb-grid" id="thumbGrid"></div>
-    <p class="lib-note">All library photos & clip art are public domain or CC0 — free for commercial use, no attribution needed. Tip: use <b>Upload</b> to add photos of your own flowers; they work everywhere in the editor.</p>
+    <p class="lib-note">All library photos & clip art are public domain or CC0 — free for commercial use, no attribution needed. The ✏️ shapes are drawn in the app, so they're yours to use freely too — click one to drop it on the packet, then recolor it in the panel. Tip: use <b>Upload</b> to add photos of your own flowers; they work everywhere in the editor.</p>
   </aside>
 
   <section id="stage">
     <div class="canvas-wrap">
       <!-- FRONT -->
       <div class="card" id="frontCard" style="container-type:inline-size;">
-        <div class="flap"></div>
         <div class="title-main editable" contenteditable spellcheck="false">HOLLYHOCK</div>
         <div class="bottom-block">
           <div class="l1 editable" contenteditable spellcheck="false">SEED PACKET</div>
@@ -222,7 +226,6 @@ input[type=color]{height:36px; border:1.5px solid #cfcfcf; border-radius:8px; ba
       </div>
       <!-- BACK -->
       <div class="card" id="backCard" style="container-type:inline-size;" hidden>
-        <div class="flap"></div>
         <div class="col-left">
           <div class="hd editable" contenteditable spellcheck="false">HOLLYHOCK SEEDS</div>
           <div class="bodytext editable" contenteditable spellcheck="false">A tall, stately flower that looks fantastic grown along the fence or wall.</div>
@@ -301,7 +304,7 @@ input[type=color]{height:36px; border:1.5px solid #cfcfcf; border-radius:8px; ba
         <button class="btn" id="bgDefault" title="Back to the original cream">↺ Cream</button>
       </div>
     </div>
-    <div id="noSel">Click any text or photo on the packet to edit it here.<br><br>💡 Click a library photo to drop it onto the packet as a new picture.</div>
+    <div id="noSel">Click any text or photo on the packet to edit it here. Drag anything — text, photos, clip art, shapes — to place it anywhere you like.<br><br>💡 Click a library photo to drop it onto the packet as a new picture.</div>
     <div id="textProps" hidden>
       <div class="prop-group">
         <label>FONT</label>
@@ -330,6 +333,11 @@ input[type=color]{height:36px; border:1.5px solid #cfcfcf; border-radius:8px; ba
       </div>
     </div>
     <div id="stickerProps" hidden>
+      <div class="prop-group" id="shapeColorGroup" hidden>
+        <label>SHAPE COLOR</label>
+        <div class="swatches" id="shapeSwatches"></div>
+        <input type="color" id="shapeColor" value="#d94f70">
+      </div>
       <div class="prop-group">
         <label>PICTURE</label>
         <div class="prop-row">
@@ -384,6 +392,36 @@ const LIB = {
 ["Tree Peony","library/clipart/tree-peony.jpg"],["Peony Woodblock","library/clipart/peony-woodblock.jpg"],["Campion","library/clipart/vintage-campion.jpg"],["Anemone","library/clipart/vintage-anemone.jpg"]
   ]
 };
+/* Recolorable vector shapes & scribbles (drawn in-app, free for any use).
+   kind "fill": solid shapes colored via fill. kind "stroke": doodle lines colored via stroke. */
+const SHAPES = [
+  {name:"Heart",kind:"fill",body:'<path d="M50 86C22 62 8 45 8 30 8 17 18 8 30 8c8 0 15 4 20 10 5-6 12-10 20-10 12 0 22 9 22 22 0 15-14 32-42 56z"/>'},
+  {name:"Sparkle",kind:"fill",body:'<path d="M50 4l8 38 38 8-38 8-8 38-8-38-38-8 38-8z"/>'},
+  {name:"Star",kind:"fill",body:'<path d="M50 6l11 24 26 3-19 18 5 26-23-13-23 13 5-26-19-18 26-3z"/>'},
+  {name:"Flower",kind:"fill",body:'<circle cx="50" cy="26" r="15"/><circle cx="73" cy="43" r="15"/><circle cx="64" cy="69" r="15"/><circle cx="36" cy="69" r="15"/><circle cx="27" cy="43" r="15"/>'},
+  {name:"Leaf",kind:"fill",body:'<path d="M50 6C76 20 88 50 84 94 42 90 12 60 18 28c6-12 20-20 32-22z"/>'},
+  {name:"Moon",kind:"fill",body:'<path d="M62 6C40 10 26 30 28 52c2 24 20 42 44 44-4 2-8 2-12 2C33 98 12 77 12 50 12 25 34 6 62 6z"/>'},
+  {name:"Tiny sparkles",kind:"fill",body:'<path d="M30 12l4 19 19 4-19 4-4 19-4-19-19-4 19-4z"/><path d="M68 40l3 14 14 3-14 3-3 14-3-14-14-3 14-3z"/><path d="M52 66l2.5 11 11 2.5-11 2.5-2.5 11-2.5-11-11-2.5 11-2.5z"/>'},
+  {name:"Ring",kind:"stroke",body:'<circle cx="50" cy="50" r="38"/>'},
+  {name:"Dotted ring",kind:"stroke",body:'<circle cx="50" cy="50" r="38" stroke-dasharray="3 11"/>'},
+  {name:"Squiggle",kind:"stroke",body:'<path d="M8 62c12-26 20 14 32-10s20 14 32-10 12 6 20-2"/>'},
+  {name:"Wavy line",kind:"stroke",body:'<path d="M6 50q11-22 22 0t22 0 22 0 22 0"/>'},
+  {name:"Zigzag",kind:"stroke",body:'<path d="M10 78L30 22l20 56 20-56 18 50"/>'},
+  {name:"Curly arrow",kind:"stroke",body:'<path d="M12 72C40 72 58 62 76 32M58 32l18-4-2 18"/>'},
+  {name:"Swirl",kind:"stroke",body:'<path d="M50 50m0-4c6 0 6 10 0 12-8 3-16-6-10-14 8-10 24-4 26 10 2 16-14 30-32 26"/>'}
+];
+function shapeSVG(i,color){
+  const s=SHAPES[i];
+  const paint=s.kind==="stroke"
+    ? 'fill="none" stroke="'+color+'" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"'
+    : 'fill="'+color+'" stroke="none"';
+  return '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" '+paint+'>'+s.body+'</svg>';
+}
+function shapeColorOf(st){
+  const svg=st.querySelector("svg"); if(!svg)return "#d94f70";
+  const s=SHAPES[+st.dataset.shape]||{kind:"fill"};
+  return s.kind==="stroke" ? (svg.getAttribute("stroke")||"#d94f70") : (svg.getAttribute("fill")||"#d94f70");
+}
 const FONT_GROUPS = [
   ["Script & playful", ["Dancing Script","Parisienne","Great Vibes","Allura","Pacifico","Lobster","Caveat","Satisfy","Shadows Into Light","Indie Flower","Permanent Marker","Baloo 2","Fredoka","Quicksand","Chewy","Gochi Hand","Rubik Bubbles","Pinyon Script","Alex Brush","Tangerine","Sacramento","Cookie","Arizonia","Rouge Script","Kalam","Shrikhand","Titan One","Bungee"]],
   ["Serif", ["Cormorant Garamond","Playfair Display","Lora","Merriweather","DM Serif Display","Fraunces","Libre Baskerville","EB Garamond"]],
@@ -433,8 +471,26 @@ const thumbGrid=document.getElementById("thumbGrid");
 document.getElementById("flowerCount").textContent="("+LIB.flowers.length+")";
 document.getElementById("vegCount").textContent="("+LIB.vegetables.length+")";
 document.getElementById("clipCount").textContent="("+LIB.clipart.length+")";
+document.getElementById("shapeCount").textContent="("+SHAPES.length+")";
 function renderLibrary(kind){
   thumbGrid.innerHTML="";
+  if(kind==="shapes"){
+    SHAPES.forEach((s,i)=>{
+      const f=document.createElement("button");
+      f.className="thumb"; f.title=s.name;
+      f.innerHTML='<span class="shapeThumb">'+shapeSVG(i,"#8a7a5f")+'</span><figcaption>'+s.name+'</figcaption>';
+      f.onclick=()=>{
+        if(replaceTarget){
+          const t=replaceTarget;
+          const o={left:parseFloat(t.style.left),top:parseFloat(t.style.top),width:parseFloat(t.style.width),z:t.style.zIndex};
+          t.remove(); exitReplaceMode(); addShape(i,o);
+        }
+        else addShape(i);
+      };
+      thumbGrid.appendChild(f);
+    });
+    return;
+  }
   LIB[kind].forEach(([name,src])=>{
     const f=document.createElement("button");
     f.className="thumb"; f.title=name;
@@ -474,7 +530,51 @@ function selectSticker(el){
   const w=parseFloat(el.style.width)||30;
   document.getElementById("stickerSize").value=w;
   document.getElementById("stickerSizeVal").textContent=Math.round(w)+"%";
+  const isShape=el.dataset.shape!==undefined&&el.dataset.shape!=="";
+  document.getElementById("shapeColorGroup").hidden=!isShape;
+  if(isShape){
+    const c=shapeColorOf(el);
+    document.getElementById("shapeColor").value=c;
+    markSwatch(document.getElementById("shapeSwatches"),c);
+  }
 }
+/* ================= text dragging =================
+   Drag (past a small threshold) moves the text box anywhere on the packet;
+   a simple tap still focuses it for editing. Positions persist via save(). */
+function makeTextDraggable(el){
+  if(el.dataset.tdrag)return; el.dataset.tdrag="1";
+  const card=el.closest(".card");
+  el.addEventListener("pointerdown",e=>{
+    if(e.button!==undefined&&e.button!==0)return;
+    const sx=e.clientX, sy=e.clientY;
+    const r=card.getBoundingClientRect(), er=el.getBoundingClientRect();
+    const dx=sx-er.left, dy=sy-er.top;
+    let dragging=false;
+    const mv=ev=>{
+      if(!dragging){
+        if(Math.hypot(ev.clientX-sx,ev.clientY-sy)<7)return;
+        dragging=true; el.style.right="auto";
+        el.style.width=((er.width/r.width)*100)+"%";
+        el.classList.add("dragging");
+      }
+      ev.preventDefault();
+      let l=((ev.clientX-r.left-dx)/r.width)*100, t=((ev.clientY-r.top-dy)/r.height)*100;
+      l=Math.max(-20,Math.min(110,l)); t=Math.max(-20,Math.min(110,t));
+      el.style.left=l+"%"; el.style.top=t+"%";
+    };
+    const up=()=>{
+      window.removeEventListener("pointermove",mv);
+      window.removeEventListener("pointerup",up);
+      window.removeEventListener("pointercancel",up);
+      el.classList.remove("dragging");
+      if(dragging){ if(window.getSelection)window.getSelection().removeAllRanges(); el.blur(); save(); }
+    };
+    window.addEventListener("pointermove",mv);
+    window.addEventListener("pointerup",up);
+    window.addEventListener("pointercancel",up);
+  });
+}
+document.querySelectorAll(".editable").forEach(makeTextDraggable);
 // text focus selects it for styling (delegation covers added text boxes too)
 [frontCard,backCard].forEach(card=>{
   card.addEventListener("focusin",e=>{
@@ -510,6 +610,39 @@ function addSticker(src,opts={}){
   selectSticker(el);
   save();
   return el;
+}
+/* recolorable vector shape stickers — drag/resize/duplicate like photos */
+function addShape(i,opts={}){
+  const card=activeCard();
+  const el=document.createElement("div");
+  el.className="sticker";
+  el.dataset.shape=i;
+  const w=opts.width||22;
+  el.style.left=(opts.left ?? (50-w/2))+"%";
+  el.style.top=(opts.top ?? 30)+"%";
+  el.style.width=w+"%";
+  el.style.zIndex=opts.z || (maxZ(card)+1);
+  el.innerHTML='<div class="shapeWrap">'+shapeSVG(i,opts.color||"#d94f70")+'</div>'+
+    '<div class="tools"><button data-act="replace" title="Replace picture">🔁</button>'+
+    '<button data-act="dup" title="Duplicate">⧉</button>'+
+    '<button data-act="remove" title="Remove">✕</button></div><div class="resize"></div>';
+  card.appendChild(el);
+  makeInteractive(el);
+  selectSticker(el);
+  save();
+  return el;
+}
+function setShapeColor(color){
+  if(!selected||selected.type!=="sticker")return;
+  const st=selected.el;
+  if(st.dataset.shape===undefined||st.dataset.shape==="")return;
+  const svg=st.querySelector("svg"); if(!svg)return;
+  const s=SHAPES[+st.dataset.shape]||{kind:"fill"};
+  if(s.kind==="stroke")svg.setAttribute("stroke",color);
+  else svg.setAttribute("fill",color);
+  document.getElementById("shapeColor").value=color;
+  markSwatch(document.getElementById("shapeSwatches"),color);
+  saveSoon();
 }
 function makeInteractive(st){
   const card=st.closest(".card");
@@ -560,11 +693,28 @@ function duplicateSticker(st){
   el.style.top=(parseFloat(st.style.top)+4)+"%";
   el.style.width=st.style.width;
   el.style.zIndex=maxZ(card)+1;
-  el.innerHTML=stickerHTML(st.querySelector("img").getAttribute("src"));
+  if(st.dataset.shape!==undefined&&st.dataset.shape!==""){
+    el.dataset.shape=st.dataset.shape;
+    const i=+st.dataset.shape;
+    el.innerHTML='<div class="shapeWrap">'+shapeSVG(i,shapeColorOf(st))+'</div>'+
+      '<div class="tools"><button data-act="replace" title="Replace picture">🔁</button>'+
+      '<button data-act="dup" title="Duplicate">⧉</button>'+
+      '<button data-act="remove" title="Remove">✕</button></div><div class="resize"></div>';
+  }else{
+    el.innerHTML=stickerHTML(st.querySelector("img").getAttribute("src"));
+  }
   card.appendChild(el); makeInteractive(el); selectSticker(el); save();
 }
 function deleteSticker(st){ st.remove(); clearSelection(); save(); }
-function doReplace(st,src){ st.querySelector("img").src=src; save(); }
+function doReplace(st,src){
+  if(st.dataset.shape!==undefined&&st.dataset.shape!==""){
+    delete st.dataset.shape;
+    st.innerHTML=stickerHTML(src);
+  }else{
+    st.querySelector("img").src=src;
+  }
+  save();
+}
 function enterReplaceMode(st){
   replaceTarget=st; selectSticker(st);
   document.getElementById("libraryPanel").classList.remove("hidden");
@@ -651,6 +801,8 @@ buildSwatches(document.getElementById("fontSwatches"),FONT_COLORS,c=>{
   inp.value=c; inp.dispatchEvent(new Event("input",{bubbles:true}));
   markSwatch(document.getElementById("fontSwatches"),c);
 });
+buildSwatches(document.getElementById("shapeSwatches"),FONT_COLORS,c=>setShapeColor(c));
+document.getElementById("shapeColor").addEventListener("input",e=>setShapeColor(e.target.value));
 function cardBgHex(card){
   const cs=getComputedStyle(card).backgroundColor;
   const m=/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?/.exec(cs||"");
@@ -695,7 +847,7 @@ document.getElementById("addTextBtn").onclick=()=>{
   el.style.left="20%"; el.style.top="40%"; el.style.width="60%";
   el.style.fontFamily="'Jost', sans-serif"; el.style.fontSize="5cqw"; el.style.color="#5b4a3a";
   el.style.textAlign="center"; el.style.zIndex=maxZ(card)+1;
-  card.appendChild(el); selectText(el); el.focus(); save();
+  card.appendChild(el); makeTextDraggable(el); selectText(el); el.focus(); save();
 };
 document.getElementById("delTextBtn").onclick=()=>{
   if(selected?.type==="text" && selected.el.classList.contains("textbox")){
@@ -779,10 +931,12 @@ function cardData(card){
       align:el.style.textAlign||"", box:el.classList.contains("textbox")?1:0,
       left:el.style.left||"", top:el.style.top||"", width:el.style.width||"", z:el.style.zIndex||""
     })),
-    stickers:[...card.querySelectorAll(".sticker")].map(s=>({
-      src:s.querySelector("img").getAttribute("src"),
-      left:s.style.left, top:s.style.top, width:s.style.width, z:s.style.zIndex
-    }))
+    stickers:[...card.querySelectorAll(".sticker")].map(s=>{
+      const d={left:s.style.left, top:s.style.top, width:s.style.width, z:s.style.zIndex};
+      if(s.dataset.shape!==undefined&&s.dataset.shape!==""){ d.shape=+s.dataset.shape; d.color=shapeColorOf(s); }
+      else { const im=s.querySelector("img"); d.src=im?im.getAttribute("src"):""; }
+      return d;
+    })
   };
 }
 function save(){
@@ -816,7 +970,7 @@ function load(){
         el.className="editable textbox"; el.contentEditable="true"; el.spellcheck=false;
         el.style.left=t.left||"20%"; el.style.top=t.top||"40%"; el.style.width=t.width||"60%";
         if(t.z)el.style.zIndex=t.z;
-        card.appendChild(el);
+        card.appendChild(el); makeTextDraggable(el);
       }
       applyText(el,t);
     });
@@ -824,7 +978,15 @@ function load(){
       const el=document.createElement("div");
       el.className="sticker";
       el.style.left=s.left; el.style.top=s.top; el.style.width=s.width; el.style.zIndex=s.z;
-      el.innerHTML=stickerHTML(s.src);
+      if(s.shape!==undefined&&s.shape!==null&&SHAPES[s.shape]){
+        el.dataset.shape=s.shape;
+        el.innerHTML='<div class="shapeWrap">'+shapeSVG(s.shape,s.color||"#d94f70")+'</div>'+
+          '<div class="tools"><button data-act="replace" title="Replace picture">🔁</button>'+
+          '<button data-act="dup" title="Duplicate">⧉</button>'+
+          '<button data-act="remove" title="Remove">✕</button></div><div class="resize"></div>';
+      }else{
+        el.innerHTML=stickerHTML(s.src);
+      }
       card.appendChild(el); makeInteractive(el);
     });
   });
