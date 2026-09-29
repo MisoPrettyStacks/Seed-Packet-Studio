@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Seed Packet Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --ink:#4a3f35; --accent:#7a8b5c; --accent-d:#5f6f45; --paper:#f6f1e3;
+  --gold:#c9a227; --rose:#c98a94;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; font-family:'Jost',sans-serif; color:var(--ink);
+  background:
+    radial-gradient(circle at 20% 10%, #fbf7ec 0, transparent 40%),
+    radial-gradient(circle at 85% 90%, #f3ecd9 0, transparent 45%),
+    var(--paper);
+  min-height:100vh; display:flex; flex-direction:column;
+}
+/* ---------- top bar ---------- */
+header.topbar{
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  padding:10px 18px; background:#fffdf6; border-bottom:2px solid #e7dcc2;
+  position:sticky; top:0; z-index:200;
+}
+.brand{font-family:'Cormorant Garamond',serif; font-weight:700; font-size:22px; letter-spacing:1px; margin-right:6px;}
+.brand small{font-family:'Jost'; font-weight:400; font-size:12px; letter-spacing:2px; color:#8a7a5f; display:block; margin-top:-4px;}
+.tabs{display:flex; gap:6px; margin-right:auto;}
+.tab{border:1.5px solid #d9cba6; background:#fff; border-radius:999px; padding:7px 18px; cursor:pointer; font-family:'Jost'; font-size:13px; letter-spacing:1.5px; color:var(--ink);}
+.tab.active{background:var(--accent); border-color:var(--accent); color:#fff;}
+.btn{border:1.5px solid #d9cba6; background:#fff; border-radius:10px; padding:8px 14px; cursor:pointer; font-family:'Jost'; font-size:13px; color:var(--ink); display:inline-flex; align-items:center; gap:6px;}
+.btn:hover{border-color:var(--accent); }
+.btn.primary{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:500;}
+.btn.primary:hover{background:var(--accent-d);}
+.btn.warn{color:#a33;}
+select.btn{padding:8px 10px;}
+/* ---------- replace banner ---------- */
+#replaceBar{
+  background:#fff8e6; border-bottom:2px dashed var(--gold); color:#7a5f14;
+  padding:8px 18px; font-size:13.5px; display:flex; gap:10px; align-items:center; justify-content:center;
+}
+#replaceBar[hidden]{display:none;}
+/* ---------- layout ---------- */
+main{flex:1; display:flex; min-height:0;}
+aside#libraryPanel{
+  width:288px; flex-shrink:0; background:#fffdf6; border-right:2px solid #e7dcc2;
+  padding:14px; overflow-y:auto; max-height:calc(100vh - 60px); position:sticky; top:60px;
+}
+aside#libraryPanel.hidden{display:none;}
+.lib-tabs{display:flex; gap:6px; margin:10px 0;}
+.lib-tab{flex:1; border:1.5px solid #d9cba6; background:#fff; border-radius:8px; padding:7px 4px; cursor:pointer; font-size:12.5px; letter-spacing:1px; font-family:'Jost';}
+.lib-tab.active{background:var(--ink); color:#fff; border-color:var(--ink);}
+.thumb-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;}
+.thumb{border:2px solid #eee3c8; border-radius:10px; overflow:hidden; cursor:pointer; background:#fff; padding:0; font-family:'Jost';}
+.thumb:hover{border-color:var(--accent); transform:translateY(-1px);}
+.thumb img{width:100%; height:64px; object-fit:cover; display:block;}
+.thumb figcaption{font-size:10.5px; padding:4px 2px; text-align:center; color:#6b5d49; line-height:1.2;}
+.lib-note{font-size:11px; color:#9a8a6d; margin-top:12px; line-height:1.5;}
+section#stage{flex:1; display:flex; flex-direction:column; align-items:center; padding:26px 16px 40px; min-width:0;}
+.hint{font-size:12.5px; color:#9a8a6d; margin-top:14px; text-align:center; max-width:520px; line-height:1.6;}
+/* ---------- properties panel ---------- */
+aside#propsPanel{
+  width:264px; flex-shrink:0; background:#fffdf6; border-left:2px solid #e7dcc2;
+  padding:14px; overflow-y:auto; max-height:calc(100vh - 60px); position:sticky; top:60px;
+}
+aside#propsPanel h3, aside#libraryPanel h3{font-family:'Cormorant Garamond',serif; font-size:19px; margin:2px 0 8px; letter-spacing:.5px;}
+.prop-group{border-top:1px dashed #e0d3b3; padding:10px 0;}
+.prop-group label{display:block; font-size:11.5px; letter-spacing:1.5px; color:#8a7a5f; margin:8px 0 4px;}
+.prop-group select, .prop-group input[type=color]{width:100%;}
+.prop-group select{border:1.5px solid #d9cba6; border-radius:8px; padding:7px; font-family:'Jost'; font-size:13px; background:#fff;}
+.prop-row{display:flex; gap:6px; flex-wrap:wrap;}
+.prop-row .btn{flex:1; justify-content:center; padding:7px 6px; font-size:12.5px;}
+.prop-row .btn.on{background:var(--ink); color:#fff; border-color:var(--ink);}
+input[type=range]{width:100%; accent-color:var(--accent);}
+input[type=color]{height:36px; border:1.5px solid #d9cba6; border-radius:8px; background:#fff; padding:2px;}
+.size-val{font-size:12px; color:#8a7a5f;}
+#noSel{font-size:13px; color:#9a8a6d; line-height:1.6;}
+/* ================= PACKET CARDS (vintage hollyhock design) ================= */
+.canvas-wrap{width:100%; display:flex; justify-content:center;}
+.card{
+  position:relative; width:min(92vw,380px); aspect-ratio:0.72;
+  background:#fbf6ea; border:1px solid #d8c9a3; border-radius:6px;
+  box-shadow:0 14px 34px rgba(90,70,40,.22), inset 0 0 60px rgba(190,160,110,.12);
+  overflow:hidden; container-type:inline-size; user-select:none;
+}
+.flap{position:absolute; top:0; left:0; right:0; height:9%; background:linear-gradient(#e9dfc6,#ded0ae); border-bottom:1px solid #c9b98f; z-index:5;}
+.title-main{
+  position:absolute; top:10.5%; left:0; right:0; text-align:center; z-index:2;
+  font-family:'Cormorant Garamond',serif; font-weight:700; font-size:9.5cqw; letter-spacing:.14em; color:#5b4a3a;
+}
+.bottom-block{position:absolute; left:0; right:0; bottom:4%; text-align:center; z-index:2;}
+.bottom-block .l1{font-family:'Cormorant Garamond',serif; font-size:5.6cqw; letter-spacing:.42em; color:#5b4a3a; margin-left:.42em;}
+.bottom-block .l2{font-size:2.9cqw; letter-spacing:.18em; color:#8a7a5f; margin-top:1.2%;}
+.bottom-block .l3{font-size:3.4cqw; letter-spacing:.3em; color:#5b4a3a; margin-top:1.6%;}
+/* back */
+#backCard .col-left{position:absolute; top:11%; left:6%; width:56%; z-index:2;}
+#backCard .hd{font-family:'Cormorant Garamond',serif; font-weight:700; font-size:4.6cqw; letter-spacing:.08em; color:#5b4a3a; margin:3.5% 0 1.5%;}
+#backCard .bodytext{font-size:3.1cqw; line-height:1.55; color:#6b5d49; font-weight:300;}
+#backCard .caption{position:absolute; z-index:2; font-size:2.7cqw; letter-spacing:.14em; color:#8a7a5f; text-align:center;}
+#backCard .dim{position:absolute; z-index:2; font-size:3cqw; color:#8a7a5f; font-style:italic;}
+.table-wrap{position:absolute; left:6%; right:6%; top:52%; z-index:2;}
+.table-title{font-size:2.9cqw; letter-spacing:.22em; color:#5b4a3a; text-align:center; border-top:1px solid #c9b98f; border-bottom:1px solid #c9b98f; padding:1.6% 0; margin-bottom:2%;}
+.table-grid{display:grid; grid-template-columns:1fr 1fr; gap:2.2% 4%;}
+.field{display:flex; align-items:flex-end; gap:1.5%; min-height:3.4cqw;}
+.flabel{font-size:2.35cqw; letter-spacing:.06em; color:#8a7a5f; white-space:nowrap;}
+.fline{flex:1; border-bottom:1px dotted #b7a67f; min-height:2.6cqw;}
+.foot-row{position:absolute; left:6%; right:6%; bottom:12.5%; display:flex; gap:5%; z-index:2;}
+.foot-row>div:first-child{flex:1.25; position:relative; min-height:14cqw;}
+.foot-row>div:last-child{flex:1; display:flex; flex-direction:column; gap:18%; justify-content:center;}
+.qr-caption{font-size:2.5cqw; letter-spacing:.08em; color:#8a7a5f; line-height:1.5;}
+.foot-bottom{position:absolute; left:6%; right:6%; bottom:4.5%; display:flex; align-items:center; gap:2.5%; z-index:2;}
+.foot-bottom .fline{min-height:3cqw;}
+/* editable text + selection */
+.editable{cursor:text; border-radius:3px; padding:0 2px;}
+.editable.selected{outline:2px solid var(--accent); outline-offset:2px; background:rgba(122,139,92,.07);}
+.editable:focus{outline:2px solid var(--accent); outline-offset:2px;}
+.textbox{position:absolute; z-index:3; font-size:5cqw; color:#5b4a3a; min-width:20%; padding:1%;}
+/* stickers */
+.sticker{position:absolute; touch-action:none; z-index:1;}
+.sticker img{width:100%; height:auto; display:block; border-radius:4px; pointer-events:none;}
+.sticker .tools{position:absolute; top:-14px; right:-8px; display:none; gap:4px; z-index:20;}
+.sticker.selected .tools{display:flex;}
+.sticker .tools button{
+  width:26px; height:26px; border-radius:50%; border:1.5px solid #b7a67f; background:#fffdf6;
+  cursor:pointer; font-size:12px; line-height:1; padding:0; display:flex; align-items:center; justify-content:center;
+  box-shadow:0 2px 6px rgba(0,0,0,.2);
+}
+.sticker .tools button:hover{background:var(--accent); color:#fff; border-color:var(--accent);}
+.sticker .resize{
+  position:absolute; right:-9px; bottom:-9px; width:20px; height:20px; cursor:nwse-resize; display:none; z-index:20;
+  background:#fffdf6; border:2px solid var(--accent); border-radius:50%;
+}
+.sticker .resize::after{content:''; position:absolute; inset:4px; border-right:2px solid var(--accent); border-bottom:2px solid var(--accent);}
+.sticker.selected .resize{display:block;}
+.sticker.selected{outline:2px solid var(--accent); outline-offset:2px;}
+/* ---------- print: exact 3.25in x 4.5in seed envelope ---------- */
+#printRoot{display:none;}
+@page{ size:3.25in 4.5in; margin:0; }
+@media print{
+  body.printing > *:not(#printRoot){ display:none !important; }
+  body.printing{ background:#fff; }
+  #printRoot{ display:block !important; }
+  #printRoot .card{
+    width:3.25in; height:4.5in; aspect-ratio:auto; max-width:none;
+    margin:0; box-shadow:none; border-radius:0;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact;
+  }
+}
+@media (max-width:1100px){
+  aside#propsPanel{display:none;}
+}
+@media (max-width:820px){
+  aside#libraryPanel{position:fixed; left:0; top:60px; bottom:0; z-index:150; box-shadow:4px 0 18px rgba(0,0,0,.15); max-height:none;}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">🌸 Seed Packet Studio<small>MISOPRETTY SEEDS</small></div>
+  <div class="tabs">
+    <button class="tab active" data-tab="front">FRONT</button>
+    <button class="tab" data-tab="back">BACK</button>
+  </div>
+  <button class="btn" id="libToggle">🖼 Library</button>
+  <button class="btn" id="uploadBtn">⬆ Upload</button>
+  <button class="btn primary" id="printBtn">🖨 Print 3.25″×4.5″</button>
+  <select class="btn" id="fmtSel" title="Download format">
+    <option value="png">PNG</option>
+    <option value="jpg">JPG</option>
+    <option value="pdf">PDF</option>
+    <option value="svg">SVG</option>
+  </select>
+  <button class="btn" id="dlBtn">⬇ Download</button>
+</header>
+
+<div id="replaceBar" hidden>
+  <span>📷 <b>Replace mode</b> — click any photo in the library to swap it into the selected picture.</span>
+  <button class="btn" id="replaceCancel">Cancel</button>
+</div>
+
+<main>
+  <aside id="libraryPanel">
+    <h3>Photo Library</h3>
+    <div class="lib-tabs">
+      <button class="lib-tab active" data-lib="flowers">🌸 flowers <span id="flowerCount"></span></button>
+      <button class="lib-tab" data-lib="vegetables">🥕 veggies <span id="vegCount"></span></button>
+    </div>
+    <div class="thumb-grid" id="thumbGrid"></div>
+    <p class="lib-note">All library photos are public domain or CC0 — free for commercial use, no attribution needed. Tip: use <b>Upload</b> to add photos of your own flowers; they work everywhere in the editor.</p>
+  </aside>
+
+  <section id="stage">
+    <div class="canvas-wrap">
+      <!-- FRONT -->
+      <div class="card" id="frontCard" style="container-type:inline-size;">
+        <div class="flap"></div>
+        <div class="title-main editable" contenteditable spellcheck="false">HOLLYHOCK</div>
+        <div class="bottom-block">
+          <div class="l1 editable" contenteditable spellcheck="false">SEED PACKET</div>
+          <div class="l2 editable" contenteditable spellcheck="false">CROWN SINGLE MIXED&nbsp;&nbsp;|&nbsp;&nbsp;HARDY PERENNIAL</div>
+          <div class="l3 editable" contenteditable spellcheck="false">25 SEEDS</div>
+        </div>
+        <div class="sticker" style="left:21%;top:21%;width:58%;z-index:1;">
+          <img src="library/flowers/hollyhock.jpg" draggable="false" alt="hollyhock">
+          <div class="tools"><button data-act="replace" title="Replace picture">🔁</button><button data-act="dup" title="Duplicate">⧉</button><button data-act="remove" title="Remove">✕</button></div>
+          <div class="resize"></div>
+        </div>
+      </div>
+      <!-- BACK -->
+      <div class="card" id="backCard" style="container-type:inline-size;" hidden>
+        <div class="flap"></div>
+        <div class="col-left">
+          <div class="hd editable" contenteditable spellcheck="false">HOLLYHOCK SEEDS</div>
+          <div class="bodytext editable" contenteditable spellcheck="false">A tall, stately flower that looks fantastic grown along the fence or wall.</div>
+          <div class="hd editable" contenteditable spellcheck="false">SOWING</div>
+          <div class="bodytext editable" contenteditable spellcheck="false">Sow indoors March to May for the best results. Sow 1.5cm deep into fertile soil or compost.</div>
+        </div>
+        <div class="caption editable" contenteditable spellcheck="false" style="top:29%;left:73%;width:22%;">FULL SUN</div>
+        <div class="sticker" style="left:66%;top:15.5%;width:20%;z-index:1;">
+          <img src="library/flowers/sunflower.jpg" draggable="false" alt="sunflower">
+          <div class="tools"><button data-act="replace" title="Replace picture">🔁</button><button data-act="dup" title="Duplicate">⧉</button><button data-act="remove" title="Remove">✕</button></div>
+          <div class="resize"></div>
+        </div>
+        <div class="sticker" style="left:64%;top:30.5%;width:17%;z-index:1;">
+          <img src="library/flowers/cosmos.jpg" draggable="false" alt="cosmos">
+          <div class="tools"><button data-act="replace" title="Replace picture">🔁</button><button data-act="dup" title="Duplicate">⧉</button><button data-act="remove" title="Remove">✕</button></div>
+          <div class="resize"></div>
+        </div>
+        <div class="dim editable" contenteditable spellcheck="false" style="top:33%;left:84%;">2 m</div>
+        <div class="dim editable" contenteditable spellcheck="false" style="top:41.5%;left:65%;">45 cm</div>
+        <div class="table-wrap">
+          <div class="table-title editable" contenteditable spellcheck="false">SEED INFORMATION &amp; COMPLIANCE DATA</div>
+          <div class="table-grid">
+            <div class="field"><span class="flabel editable" contenteditable spellcheck="false">KIND / VARIETY:</span><span class="fline"></span></div>
+            <div class="field"><span class="flabel editable" contenteditable spellcheck="false">OTHER CROP %:</span><span class="fline"></span></div>
+            <div class="field"><span class="flabel editable" contenteditable spellcheck="false">LOT NO.:</span><span class="fline"></span></div>
+            <div class="field"><span class="flabel editable" contenteditable spellcheck="false">INERT MATTER %:</span><span class="fline"></span></div>
+            <div class="field"><span class="flabel editable" contenteditable spellcheck="false">PACKED FOR:</span><span class="fline"></span></div>
+            <div class="field"><span class="flabel editable" contenteditable spellcheck="false">NOXIOUS WEEDS:</span><span class="fline"></span></div>
+            <div class="field"><span class="flabel editable" contenteditable spellcheck="false">SELL BY / USE BEFORE:</span><span class="fline"></span></div>
+            <div class="field"><span class="flabel editable" contenteditable spellcheck="false">NET WT. / SEED COUNT:</span><span class="fline"></span></div>
+            <div class="field"><span class="flabel editable" contenteditable spellcheck="false">GERMINATION %:</span><span class="fline"></span></div>
+            <div class="field"><span class="flabel editable" contenteditable spellcheck="false">TREATMENT (IF ANY):</span><span class="fline"></span></div>
+            <div class="field"><span class="flabel editable" contenteditable spellcheck="false">TEST DATE:</span><span class="fline"></span></div>
+            <div class="field"><span class="flabel editable" contenteditable spellcheck="false">LABELER NAME:</span><span class="fline"></span></div>
+            <div class="field"><span class="flabel editable" contenteditable spellcheck="false">PURE SEED %:</span><span class="fline"></span></div>
+            <div class="field"><span class="flabel editable" contenteditable spellcheck="false">LABELER ADDRESS / CITY / STATE / ZIP:</span><span class="fline"></span></div>
+            <div class="field"><span class="flabel editable" contenteditable spellcheck="false">WEED SEED %:</span><span class="fline"></span></div>
+            <div class="field"></div>
+          </div>
+        </div>
+        <div class="foot-row">
+          <div>
+            <div class="sticker" style="left:0%;top:0%;width:46%;z-index:1;position:relative;display:inline-block;">
+              <img src="library/flowers/daisy.jpg" draggable="false" alt="daisy">
+              <div class="tools"><button data-act="replace" title="Replace picture">🔁</button><button data-act="dup" title="Duplicate">⧉</button><button data-act="remove" title="Remove">✕</button></div>
+              <div class="resize"></div>
+            </div>
+            <div class="qr-caption editable" contenteditable spellcheck="false" style="position:absolute;top:0;left:52%;width:46%;">SCAN FOR PLANTING TIPS, CARE GUIDE &amp; MORE INFO:</div>
+          </div>
+          <div>
+            <div class="field"><span class="flabel editable" contenteditable spellcheck="false">PACKED BY:</span><span class="fline"></span></div>
+            <div class="field"><span class="flabel editable" contenteditable spellcheck="false">DATE PACKED:</span><span class="fline"></span></div>
+          </div>
+        </div>
+        <div class="foot-bottom">
+          <div class="sticker" style="left:0%;top:0%;width:9%;position:relative;display:inline-block;flex-shrink:0;">
+            <img src="library/flowers/cornflower.jpg" draggable="false" alt="cornflower">
+            <div class="tools"><button data-act="replace" title="Replace picture">🔁</button><button data-act="dup" title="Duplicate">⧉</button><button data-act="remove" title="Remove">✕</button></div>
+            <div class="resize"></div>
+          </div>
+          <span class="flabel editable" contenteditable spellcheck="false">CUSTOMER SUPPORT / WEBSITE:</span>
+          <span class="fline"></span>
+        </div>
+      </div>
+    </div>
+    <p class="hint">Click any <b>text</b> to edit the words and restyle it with fonts, size &amp; color — click any <b>photo</b> to move, resize, replace, duplicate or delete it. Everything autosaves in this browser. <b>Print</b> outputs the exact 3.25″ × 4.5″ seed-envelope size. <a href="#" id="resetLink" style="color:#a33;">Reset design</a></p>
+  </section>
+
+  <aside id="propsPanel">
+    <h3>Selected</h3>
+    <div id="noSel">Click any text or photo on the packet to edit it here.<br><br>💡 Click a library photo to drop it onto the packet as a new picture.</div>
+    <div id="textProps" hidden>
+      <div class="prop-group">
+        <label>FONT</label>
+        <select id="fontSel"></select>
+        <label>SIZE <span class="size-val" id="fontSizeVal"></span></label>
+        <input type="range" id="fontSize" min="1" max="14" step="0.25" value="5">
+        <label>COLOR</label>
+        <input type="color" id="fontColor" value="#5b4a3a">
+        <label>STYLE &amp; ALIGN</label>
+        <div class="prop-row">
+          <button class="btn" id="boldBtn"><b>B</b></button>
+          <button class="btn" id="italicBtn"><i>I</i></button>
+        </div>
+        <div class="prop-row" style="margin-top:6px;">
+          <button class="btn" data-align="left">⇤</button>
+          <button class="btn" data-align="center">⇔</button>
+          <button class="btn" data-align="right">⇥</button>
+        </div>
+      </div>
+      <div class="prop-group">
+        <div class="prop-row">
+          <button class="btn" id="addTextBtn">+ Add text</button>
+          <button class="btn warn" id="delTextBtn" hidden>Delete text</button>
+        </div>
+      </div>
+    </div>
+    <div id="stickerProps" hidden>
+      <div class="prop-group">
+        <label>PICTURE</label>
+        <div class="prop-row">
+          <button class="btn" id="replaceBtn">🔁 Replace</button>
+          <button class="btn" id="dupBtn">⧉ Duplicate</button>
+        </div>
+        <div class="prop-row" style="margin-top:6px;">
+          <button class="btn warn" id="delStickerBtn">✕ Delete</button>
+        </div>
+        <label>LAYER</label>
+        <div class="prop-row">
+          <button class="btn" id="fwdBtn">⬆ Forward</button>
+          <button class="btn" id="backBtn">⬇ Backward</button>
+        </div>
+        <label>SIZE <span class="size-val" id="stickerSizeVal"></span></label>
+        <input type="range" id="stickerSize" min="4" max="100" step="1" value="30">
+      </div>
+    </div>
+  </aside>
+</main>
+
+<input type="file" id="fileInput" accept="image/*" hidden>
+<div id="printRoot"></div>
+<script>
+/* ================= data ================= */
+const LIB = {
+  flowers: [
+    ["Sunflower","library/flowers/sunflower.jpg"],["Cosmos","library/flowers/cosmos.jpg"],
+    ["Cornflower","library/flowers/cornflower.jpg"],["Marigold","library/flowers/marigold.jpg"],
+    ["Zinnia","library/flowers/zinnia.jpg"],["Dahlia","library/flowers/dahlia.jpg"],
+    ["Petunia","library/flowers/petunia.jpg"],["Pansy","library/flowers/pansy.jpg"],
+    ["Lavender","library/flowers/lavender.jpg"],["Poppy","library/flowers/poppy.jpg"],
+    ["Tulip","library/flowers/tulip.jpg"],["Daisy","library/flowers/daisy.jpg"],
+    ["Coneflower","library/flowers/coneflower.jpg"],["Black-Eyed Susan","library/flowers/blackeyed-susan.jpg"],
+    ["Snapdragon","library/flowers/snapdragon.jpg"],["Nasturtium","library/flowers/nasturtium.jpg"],
+    ["Calendula","library/flowers/calendula.jpg"],["Sweet Pea","library/flowers/sweet-pea.jpg"],
+    ["Morning Glory","library/flowers/morning-glory.jpg"],["Hollyhock","library/flowers/hollyhock.jpg"]
+  ],
+  vegetables: [
+    ["Tomato","library/vegetables/tomato.jpg"],["Carrot","library/vegetables/carrot.jpg"],
+    ["Cucumber","library/vegetables/cucumber.jpg"],["Bell Pepper","library/vegetables/bell-pepper.jpg"],
+    ["Lettuce","library/vegetables/lettuce.jpg"],["Zucchini","library/vegetables/zucchini.jpg"],
+    ["Pumpkin","library/vegetables/pumpkin.jpg"],["Corn","library/vegetables/corn.jpg"],
+    ["Green Beans","library/vegetables/green-beans.jpg"],["Peas","library/vegetables/peas.jpg"],
+    ["Radish","library/vegetables/radish.jpg"],["Broccoli","library/vegetables/broccoli.jpg"]
+  ]
+};
+const FONT_GROUPS = [
+  ["Script & playful", ["Dancing Script","Parisienne","Great Vibes","Allura","Pacifico","Lobster","Caveat","Satisfy","Shadows Into Light","Indie Flower","Permanent Marker","Baloo 2","Fredoka","Quicksand","Chewy","Gochi Hand","Rubik Bubbles"]],
+  ["Serif", ["Cormorant Garamond","Playfair Display","Lora","Merriweather"]],
+  ["Sans", ["Jost","Montserrat","Poppins","Nunito","Raleway","Inter"]]
+];
+const ALL_FONTS = FONT_GROUPS.flatMap(g=>g[1]);
+const loadedFonts = new Set(["Cormorant Garamond","Jost"]);
+function ensureFont(fam){
+  if(!fam || loadedFonts.has(fam)) return Promise.resolve();
+  loadedFonts.add(fam);
+  const link=document.createElement("link");
+  link.rel="stylesheet";
+  link.href="https://fonts.googleapis.com/css2?family="+fam.replace(/ /g,"+")+":ital,wght@0,400;0,600;0,700;1,400&display=swap";
+  document.head.appendChild(link);
+  return document.fonts.load('16px "'+fam+'"').catch(()=>{});
+}
+function fontNameFromStack(stack){
+  const m=/['"]([^'"]+)['"]/.exec(stack||"");
+  return m?m[1]:(stack||"").split(",")[0].trim();
+}
+
+const STORE_KEY="seed_packet_studio_v1";
+const frontCard=document.getElementById("frontCard"), backCard=document.getElementById("backCard");
+const printRoot=document.getElementById("printRoot");
+const fileInput=document.getElementById("fileInput");
+let currentTab="front", selected=null, replaceTarget=null;
+
+const activeCard=()=>currentTab==="front"?frontCard:backCard;
+const maxZ=card=>Math.max(1,...[...card.querySelectorAll(".sticker")].map(s=>parseInt(s.style.zIndex)||1));
+
+/* ================= tabs ================= */
+document.querySelectorAll(".tab").forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    currentTab=btn.dataset.tab;
+    frontCard.hidden=currentTab!=="front";
+    backCard.hidden=currentTab!=="back";
+    clearSelection();
+  };
+});
+document.getElementById("libToggle").onclick=()=>document.getElementById("libraryPanel").classList.toggle("hidden");
+
+/* ================= library ================= */
+const thumbGrid=document.getElementById("thumbGrid");
+document.getElementById("flowerCount").textContent="("+LIB.flowers.length+")";
+document.getElementById("vegCount").textContent="("+LIB.vegetables.length+")";
+function renderLibrary(kind){
+  thumbGrid.innerHTML="";
+  LIB[kind].forEach(([name,src])=>{
+    const f=document.createElement("button");
+    f.className="thumb"; f.title=name;
+    f.innerHTML='<img loading="lazy" src="'+src+'" alt="'+name+'"><figcaption>'+name+'</figcaption>';
+    f.onclick=()=>{
+      if(replaceTarget){ doReplace(replaceTarget, src); exitReplaceMode(); }
+      else addSticker(src);
+    };
+    thumbGrid.appendChild(f);
+  });
+}
+document.querySelectorAll(".lib-tab").forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll(".lib-tab").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active"); renderLibrary(b.dataset.lib);
+  };
+});
+renderLibrary("flowers");
+
+/* ================= selection ================= */
+const noSel=document.getElementById("noSel"), textProps=document.getElementById("textProps"), stickerProps=document.getElementById("stickerProps");
+function clearSelection(){
+  selected=null;
+  document.querySelectorAll(".selected").forEach(e=>e.classList.remove("selected"));
+  noSel.hidden=false; textProps.hidden=true; stickerProps.hidden=true;
+}
+function selectText(el){
+  clearSelection(); selected={type:"text", el};
+  el.classList.add("selected");
+  noSel.hidden=true; textProps.hidden=false;
+  syncTextPanel(el);
+}
+function selectSticker(el){
+  clearSelection(); selected={type:"sticker", el};
+  el.classList.add("selected");
+  noSel.hidden=true; stickerProps.hidden=false;
+  const w=parseFloat(el.style.width)||30;
+  document.getElementById("stickerSize").value=w;
+  document.getElementById("stickerSizeVal").textContent=Math.round(w)+"%";
+}
+// text focus selects it for styling (delegation covers added text boxes too)
+[frontCard,backCard].forEach(card=>{
+  card.addEventListener("focusin",e=>{
+    const t=e.target.closest(".editable");
+    if(t && (!selected || selected.el!==t)) selectText(t);
+  });
+  card.addEventListener("pointerdown",e=>{
+    const t=e.target.closest(".editable");
+    if(t && (!selected || selected.el!==t)) selectText(t);
+  });
+  card.addEventListener("input",e=>{ if(e.target.closest(".editable")) saveSoon(); });
+});
+
+/* ================= stickers ================= */
+function stickerHTML(src,alt){
+  return '<img src="'+src+'" draggable="false" alt="'+(alt||"")+'">'+
+    '<div class="tools"><button data-act="replace" title="Replace picture">🔁</button>'+
+    '<button data-act="dup" title="Duplicate">⧉</button>'+
+    '<button data-act="remove" title="Remove">✕</button></div><div class="resize"></div>';
+}
+function addSticker(src,opts={}){
+  const card=activeCard();
+  const el=document.createElement("div");
+  el.className="sticker";
+  const w=opts.width||34;
+  el.style.left=(opts.left ?? (50-w/2))+"%";
+  el.style.top=(opts.top ?? 30)+"%";
+  el.style.width=w+"%";
+  el.style.zIndex=opts.z || (maxZ(card)+1);
+  el.innerHTML=stickerHTML(src);
+  card.appendChild(el);
+  makeInteractive(el);
+  selectSticker(el);
+  save();
+  return el;
+}
+function makeInteractive(st){
+  const card=st.closest(".card");
+  st.addEventListener("pointerdown",e=>{
+    if(e.target.closest(".tools")||e.target.closest(".resize"))return;
+    e.preventDefault();
+    selectSticker(st);
+    const r=card.getBoundingClientRect(), sr=st.getBoundingClientRect();
+    const dx=e.clientX-sr.left, dy=e.clientY-sr.top;
+    let moved=false;
+    const mv=ev=>{
+      moved=true;
+      let l=((ev.clientX-r.left-dx)/r.width)*100, t=((ev.clientY-r.top-dy)/r.height)*100;
+      l=Math.max(-20,Math.min(110,l)); t=Math.max(-20,Math.min(110,t));
+      st.style.left=l+"%"; st.style.top=t+"%";
+    };
+    const up=()=>{window.removeEventListener("pointermove",mv);window.removeEventListener("pointerup",up); if(moved)save();};
+    window.addEventListener("pointermove",mv); window.addEventListener("pointerup",up);
+  });
+  st.querySelector(".resize").addEventListener("pointerdown",e=>{
+    e.preventDefault(); e.stopPropagation();
+    selectSticker(st);
+    const r=card.getBoundingClientRect(), sr=st.getBoundingClientRect();
+    const startX=e.clientX, startW=sr.width;
+    const mv=ev=>{
+      const w=Math.max(4,Math.min(100,(startW+(ev.clientX-startX))/r.width*100));
+      st.style.width=w+"%";
+      document.getElementById("stickerSize").value=w;
+      document.getElementById("stickerSizeVal").textContent=Math.round(w)+"%";
+    };
+    const up=()=>{window.removeEventListener("pointermove",mv);window.removeEventListener("pointerup",up);save();};
+    window.addEventListener("pointermove",mv); window.addEventListener("pointerup",up);
+  });
+  st.querySelector(".tools").addEventListener("click",e=>{
+    const act=e.target.closest("button")?.dataset.act;
+    if(!act)return;
+    e.stopPropagation();
+    if(act==="remove"){ st.remove(); clearSelection(); save(); }
+    else if(act==="dup"){ duplicateSticker(st); }
+    else if(act==="replace"){ enterReplaceMode(st); }
+  });
+}
+function duplicateSticker(st){
+  const card=st.closest(".card");
+  const el=document.createElement("div");
+  el.className="sticker";
+  el.style.left=(parseFloat(st.style.left)+4)+"%";
+  el.style.top=(parseFloat(st.style.top)+4)+"%";
+  el.style.width=st.style.width;
+  el.style.zIndex=maxZ(card)+1;
+  el.innerHTML=stickerHTML(st.querySelector("img").getAttribute("src"));
+  card.appendChild(el); makeInteractive(el); selectSticker(el); save();
+}
+function deleteSticker(st){ st.remove(); clearSelection(); save(); }
+function doReplace(st,src){ st.querySelector("img").src=src; save(); }
+function enterReplaceMode(st){
+  replaceTarget=st; selectSticker(st);
+  document.getElementById("libraryPanel").classList.remove("hidden");
+  document.getElementById("replaceBar").hidden=false;
+}
+function exitReplaceMode(){ replaceTarget=null; document.getElementById("replaceBar").hidden=true; }
+document.getElementById("replaceCancel").onclick=exitReplaceMode;
+document.querySelectorAll(".sticker").forEach(makeInteractive);
+document.getElementById("stickerSize").addEventListener("input",e=>{
+  if(selected?.type==="sticker"){
+    selected.el.style.width=e.target.value+"%";
+    document.getElementById("stickerSizeVal").textContent=e.target.value+"%";
+    saveSoon();
+  }
+});
+document.getElementById("replaceBtn").onclick=()=>{ if(selected?.type==="sticker") enterReplaceMode(selected.el); };
+document.getElementById("dupBtn").onclick=()=>{ if(selected?.type==="sticker") duplicateSticker(selected.el); };
+document.getElementById("delStickerBtn").onclick=()=>{ if(selected?.type==="sticker") deleteSticker(selected.el); };
+document.getElementById("fwdBtn").onclick=()=>{ if(selected?.type==="sticker"){ const s=selected.el; s.style.zIndex=Math.min(50,(parseInt(s.style.zIndex)||1)+1); save(); } };
+document.getElementById("backBtn").onclick=()=>{ if(selected?.type==="sticker"){ const s=selected.el; s.style.zIndex=Math.max(1,(parseInt(s.style.zIndex)||1)-1); save(); } };
+/* ================= text styling ================= */
+const fontSel=document.getElementById("fontSel");
+FONT_GROUPS.forEach(([group,names])=>{
+  const og=document.createElement("optgroup"); og.label=group;
+  names.forEach(n=>{ const o=document.createElement("option"); o.value=n; o.textContent=n; og.appendChild(o); });
+  fontSel.appendChild(og);
+});
+function rgbToHex(rgb){
+  const m=/rgba?\((\d+),\s*(\d+),\s*(\d+)/.exec(rgb||"");
+  return m?"#"+[1,2,3].map(i=>parseInt(m[i]).toString(16).padStart(2,"0")).join(""):"#5b4a3a";
+}
+function syncTextPanel(el){
+  const cs=getComputedStyle(el);
+  const fam=fontNameFromStack(el.style.fontFamily||cs.fontFamily);
+  fontSel.value=ALL_FONTS.includes(fam)?fam:fontSel.options[0].value;
+  const size=parseFloat(el.style.fontSize||cs.fontSize);
+  // fontSize may be cqw; read inline style directly when set
+  const inline=/([\d.]+)cqw/.exec(el.style.fontSize||"");
+  const v=inline?parseFloat(inline[1]):5;
+  document.getElementById("fontSize").value=v;
+  document.getElementById("fontSizeVal").textContent=v.toFixed(1).replace(/\.0$/,"")+" cqw";
+  document.getElementById("fontColor").value=rgbToHex(el.style.color||cs.color);
+  document.getElementById("boldBtn").classList.toggle("on",(el.style.fontWeight||cs.fontWeight)==="700"||parseInt(cs.fontWeight)>=600);
+  document.getElementById("italicBtn").classList.toggle("on",(el.style.fontStyle||cs.fontStyle)==="italic");
+  document.querySelectorAll("[data-align]").forEach(b=>b.classList.toggle("on",(el.style.textAlign||cs.textAlign)===b.dataset.align));
+  document.getElementById("delTextBtn").hidden=!el.classList.contains("textbox");
+}
+fontSel.addEventListener("change",()=>{
+  if(selected?.type!=="text")return;
+  const fam=fontSel.value;
+  ensureFont(fam).then(()=>{
+    selected.el.style.fontFamily="'"+fam+"', sans-serif";
+    syncTextPanel(selected.el); save();
+  });
+});
+document.getElementById("fontSize").addEventListener("input",e=>{
+  if(selected?.type!=="text")return;
+  selected.el.style.fontSize=e.target.value+"cqw";
+  document.getElementById("fontSizeVal").textContent=parseFloat(e.target.value).toFixed(1).replace(/\.0$/,"")+" cqw";
+  saveSoon();
+});
+document.getElementById("fontColor").addEventListener("input",e=>{
+  if(selected?.type!=="text")return;
+  selected.el.style.color=e.target.value; saveSoon();
+});
+document.getElementById("boldBtn").onclick=()=>{
+  if(selected?.type!=="text")return;
+  const el=selected.el, on=getComputedStyle(el).fontWeight==="700"||parseInt(getComputedStyle(el).fontWeight)>=600;
+  el.style.fontWeight=on?"400":"700"; syncTextPanel(el); save();
+};
+document.getElementById("italicBtn").onclick=()=>{
+  if(selected?.type!=="text")return;
+  const el=selected.el, on=getComputedStyle(el).fontStyle==="italic";
+  el.style.fontStyle=on?"normal":"italic"; syncTextPanel(el); save();
+};
+document.querySelectorAll("[data-align]").forEach(b=>{
+  b.onclick=()=>{ if(selected?.type!=="text")return; selected.el.style.textAlign=b.dataset.align; syncTextPanel(selected.el); save(); };
+});
+document.getElementById("addTextBtn").onclick=()=>{
+  const card=activeCard();
+  const el=document.createElement("div");
+  el.className="editable textbox"; el.contentEditable="true"; el.spellcheck=false;
+  el.textContent="Your text here";
+  el.style.left="20%"; el.style.top="40%"; el.style.width="60%";
+  el.style.fontFamily="'Jost', sans-serif"; el.style.fontSize="5cqw"; el.style.color="#5b4a3a";
+  el.style.textAlign="center"; el.style.zIndex=maxZ(card)+1;
+  card.appendChild(el); selectText(el); el.focus(); save();
+};
+document.getElementById("delTextBtn").onclick=()=>{
+  if(selected?.type==="text" && selected.el.classList.contains("textbox")){
+    selected.el.remove(); clearSelection(); save();
+  }
+};
+
+/* ================= upload ================= */
+document.getElementById("uploadBtn").onclick=()=>fileInput.click();
+fileInput.addEventListener("change",()=>{
+  const f=fileInput.files[0]; if(!f)return;
+  const rd=new FileReader();
+  rd.onload=()=>{
+    if(replaceTarget){ doReplace(replaceTarget, rd.result); exitReplaceMode(); }
+    else addSticker(rd.result);
+    fileInput.value="";
+  };
+  rd.readAsDataURL(f);
+});
+
+/* ================= print (exact 3.25in x 4.5in) ================= */
+function cleanClone(src){
+  const c=src.cloneNode(true);
+  c.querySelectorAll(".tools,.resize").forEach(e=>e.remove());
+  c.querySelectorAll(".selected").forEach(e=>e.classList.remove("selected"));
+  c.querySelectorAll(".editable").forEach(e=>e.removeAttribute("contenteditable"));
+  c.hidden=false; c.removeAttribute("id");
+  return c;
+}
+document.getElementById("printBtn").onclick=()=>{
+  printRoot.innerHTML="";
+  printRoot.appendChild(cleanClone(activeCard()));
+  document.body.classList.add("printing");
+  setTimeout(()=>window.print(),60);
+};
+window.addEventListener("afterprint",()=>{
+  document.body.classList.remove("printing");
+  printRoot.innerHTML="";
+});
+
+/* ================= downloads ================= */
+function cleanForExport(card){
+  card.querySelectorAll(".selected").forEach(e=>e.classList.remove("selected"));
+}
+document.getElementById("dlBtn").onclick=()=>{
+  const fmt=document.getElementById("fmtSel").value;
+  const card=activeCard(); cleanForExport(card);
+  const name="seed-packet-"+currentTab;
+  if(fmt==="svg"){
+    const clone=cleanClone(card);
+    clone.setAttribute("xmlns","http://www.w3.org/2000/svg");
+    const blob=new Blob(['<svg xmlns="http://www.w3.org/2000/svg" width="975" height="1350"><foreignObject width="100%" height="100%">'+new XMLSerializer().serializeToString(clone)+"</foreignObject></svg>"],{type:"image/svg+xml"});
+    const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name+".svg"; a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+    return;
+  }
+  html2canvas(card,{backgroundColor:"#fbf6ea",scale:3,useCORS:true}).then(canvas=>{
+    if(fmt==="pdf"){
+      const {jsPDF}=window.jspdf;
+      const pdf=new jsPDF({unit:"in",format:[3.25,4.5],orientation:"portrait"});
+      pdf.addImage(canvas.toDataURL("image/jpeg",0.95),"JPEG",0,0,3.25,4.5);
+      pdf.save(name+".pdf");
+    }else{
+      const a=document.createElement("a");
+      a.download=name+"."+fmt;
+      a.href=canvas.toDataURL(fmt==="jpg"?"image/jpeg":"image/png",0.95);
+      a.click();
+    }
+  }).catch(err=>alert("Export failed: "+err.message));
+};
+
+/* ================= autosave / load / reset ================= */
+let saveT=null;
+function saveSoon(){ clearTimeout(saveT); saveT=setTimeout(save,400); }
+function cardData(card){
+  return {
+    texts:[...card.querySelectorAll(".editable")].map(el=>({
+      html:el.innerHTML, font:el.style.fontFamily||"", size:el.style.fontSize||"",
+      color:el.style.color||"", weight:el.style.fontWeight||"", style:el.style.fontStyle||"",
+      align:el.style.textAlign||"", box:el.classList.contains("textbox")?1:0,
+      left:el.style.left||"", top:el.style.top||"", width:el.style.width||"", z:el.style.zIndex||""
+    })),
+    stickers:[...card.querySelectorAll(".sticker")].map(s=>({
+      src:s.querySelector("img").getAttribute("src"),
+      left:s.style.left, top:s.style.top, width:s.style.width, z:s.style.zIndex
+    }))
+  };
+}
+function save(){
+  try{
+    localStorage.setItem(STORE_KEY, JSON.stringify({front:cardData(frontCard), back:cardData(backCard)}));
+  }catch(e){ /* quota (big uploads) — session still works */ }
+}
+function applyText(el,t){
+  el.innerHTML=t.html;
+  if(t.font){ el.style.fontFamily=t.font; ensureFont(fontNameFromStack(t.font)); }
+  if(t.size)el.style.fontSize=t.size;
+  if(t.color)el.style.color=t.color;
+  if(t.weight)el.style.fontWeight=t.weight;
+  if(t.style)el.style.fontStyle=t.style;
+  if(t.align)el.style.textAlign=t.align;
+}
+function load(){
+  let d; try{ d=JSON.parse(localStorage.getItem(STORE_KEY)); }catch(e){}
+  if(!d||!d.front)return;
+  [["frontCard",d.front],["backCard",d.back]].forEach(([id,cd])=>{
+    if(!cd)return;
+    const card=document.getElementById(id);
+    card.querySelectorAll(".sticker").forEach(s=>s.remove());
+    card.querySelectorAll(".editable.textbox").forEach(t=>t.remove());
+    const templates=[...card.querySelectorAll(".editable")];
+    (cd.texts||[]).forEach((t,i)=>{
+      let el=templates[i];
+      if(!el){
+        el=document.createElement("div");
+        el.className="editable textbox"; el.contentEditable="true"; el.spellcheck=false;
+        el.style.left=t.left||"20%"; el.style.top=t.top||"40%"; el.style.width=t.width||"60%";
+        if(t.z)el.style.zIndex=t.z;
+        card.appendChild(el);
+      }
+      applyText(el,t);
+    });
+    (cd.stickers||[]).forEach(s=>{
+      const el=document.createElement("div");
+      el.className="sticker";
+      el.style.left=s.left; el.style.top=s.top; el.style.width=s.width; el.style.zIndex=s.z;
+      el.innerHTML=stickerHTML(s.src);
+      card.appendChild(el); makeInteractive(el);
+    });
+  });
+}
+document.getElementById("resetLink").onclick=e=>{
+  e.preventDefault();
+  if(confirm("Reset the packet to the original template? Your current edits will be cleared.")){
+    localStorage.removeItem(STORE_KEY); location.reload();
+  }
+};
+load();
+</script>
+</body>
+</html>

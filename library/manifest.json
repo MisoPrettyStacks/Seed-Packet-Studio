@@ -1,0 +1,195 @@
+{
+  "flowers/sunflower": {
+    "title": "File:Sunflower Public Domain.jpg",
+    "page": "https://commons.wikimedia.org/?curid=75422806",
+    "license": "CC0",
+    "file": "library/flowers/sunflower.jpg"
+  },
+  "flowers/cosmos": {
+    "title": "File:Flowers (20230821-FPAC-KLS-0005).jpg",
+    "page": "https://commons.wikimedia.org/?curid=184762523",
+    "license": "Public domain",
+    "file": "library/flowers/cosmos.jpg"
+  },
+  "flowers/cornflower": {
+    "title": "File:Centaurea cyanus blue + white.jpg",
+    "page": "https://commons.wikimedia.org/?curid=33512693",
+    "license": "CC0",
+    "file": "library/flowers/cornflower.jpg"
+  },
+  "flowers/marigold": {
+    "title": "File:Flowers (20190911-OPPE-LSC-0557).jpg",
+    "page": "https://commons.wikimedia.org/?curid=185005732",
+    "license": "Public domain",
+    "file": "library/flowers/marigold.jpg"
+  },
+  "flowers/zinnia": {
+    "title": "File:20210717-FPAC-PJK-2033-Enhanced.jpg",
+    "page": "https://commons.wikimedia.org/?curid=184910891",
+    "license": "Public domain",
+    "file": "library/flowers/zinnia.jpg"
+  },
+  "flowers/dahlia": {
+    "title": "File:Vibrant Red Dahlia Bloom in Garden.jpg",
+    "page": "https://commons.wikimedia.org/?curid=159332994",
+    "license": "CC0",
+    "file": "library/flowers/dahlia.jpg"
+  },
+  "flowers/petunia": {
+    "title": "File:White Petunia axillaris.jpg",
+    "page": "https://commons.wikimedia.org/?curid=146883695",
+    "license": "CC0",
+    "file": "library/flowers/petunia.jpg"
+  },
+  "flowers/pansy": {
+    "title": "File:Viola tricolor pansy flower close up.jpg",
+    "page": "https://commons.wikimedia.org/?curid=30489829",
+    "license": "Public domain",
+    "file": "library/flowers/pansy.jpg"
+  },
+  "flowers/lavender": {
+    "title": "File:Lavender Flower Closeup.jpg",
+    "page": "https://commons.wikimedia.org/?curid=113073637",
+    "license": "CC0",
+    "file": "library/flowers/lavender.jpg"
+  },
+  "flowers/poppy": {
+    "title": "File:Poppy flower 02.jpg",
+    "page": "https://commons.wikimedia.org/?curid=146237698",
+    "license": "CC0",
+    "file": "library/flowers/poppy.jpg"
+  },
+  "flowers/tulip": {
+    "title": "File:Bunch tulip Paris 2011.jpg",
+    "page": "https://commons.wikimedia.org/?curid=14060928",
+    "license": "CC0",
+    "file": "library/flowers/tulip.jpg"
+  },
+  "flowers/daisy": {
+    "title": "File:Barlovento, daisy-like flower.jpg",
+    "page": "https://commons.wikimedia.org/?curid=184667199",
+    "license": "CC0",
+    "file": "library/flowers/daisy.jpg"
+  },
+  "flowers/coneflower": {
+    "title": "File:Purple Coneflower Indiana.jpg",
+    "page": "https://commons.wikimedia.org/?curid=141484124",
+    "license": "CC0",
+    "file": "library/flowers/coneflower.jpg"
+  },
+  "flowers/blackeyed-susan": {
+    "title": "File:Fall Colors 2019 (20191007-FS-Midwin-WMS-001).jpg",
+    "page": "https://commons.wikimedia.org/?curid=185496590",
+    "license": "Public domain",
+    "file": "library/flowers/blackeyed-susan.jpg"
+  },
+  "flowers/snapdragon": {
+    "title": "File:Antirrhinums (Snapdragons) By E. Fortescue Brickdale.jpg",
+    "page": "https://commons.wikimedia.org/?curid=87261830",
+    "license": "Public domain",
+    "file": "library/flowers/snapdragon.jpg"
+  },
+  "flowers/nasturtium": {
+    "title": "File:Yellow and red Tropaeolum majus (Garden nasturtium).jpg",
+    "page": "https://commons.wikimedia.org/?curid=86709128",
+    "license": "CC0",
+    "file": "library/flowers/nasturtium.jpg"
+  },
+  "flowers/calendula": {
+    "title": "File:Bright yellow Calendula flower.jpg",
+    "page": "https://commons.wikimedia.org/?curid=24897584",
+    "license": "Public domain",
+    "file": "library/flowers/calendula.jpg"
+  },
+  "flowers/sweet-pea": {
+    "title": "File:Sweet Pea Blossoms.jpg",
+    "page": "https://commons.wikimedia.org/?curid=115156292",
+    "license": "Public domain",
+    "file": "library/flowers/sweet-pea.jpg"
+  },
+  "flowers/hollyhock": {
+    "title": "File:Hollyhock public domain IMG 0135.jpg",
+    "page": "https://commons.wikimedia.org/?curid=68808770",
+    "license": "CC0",
+    "file": "library/flowers/hollyhock.jpg"
+  },
+  "vegetables/tomato": {
+    "title": "File:Tomatoes - USDA ARS - K4667-6.jpg",
+    "page": "https://commons.wikimedia.org/?curid=19074418",
+    "license": "Public domain",
+    "file": "library/vegetables/tomato.jpg"
+  },
+  "vegetables/carrot": {
+    "title": "File:Carrots of many colors.jpg",
+    "page": "https://commons.wikimedia.org/?curid=545126",
+    "license": "Public domain",
+    "file": "library/vegetables/carrot.jpg"
+  },
+  "vegetables/cucumber": {
+    "title": "File:Cucumber Tha-Khar-Tee.jpg",
+    "page": "https://commons.wikimedia.org/?curid=175548309",
+    "license": "CC0",
+    "file": "library/vegetables/cucumber.jpg"
+  },
+  "vegetables/bell-pepper": {
+    "name": "bell pepper",
+    "title": "File:Peppers in water.jpg",
+    "file": "library/vegetables/bell-pepper.jpg",
+    "page": "https://commons.wikimedia.org/?curid=72732742",
+    "license": "CC0"
+  },
+  "vegetables/lettuce": {
+    "title": "File:Lettuce in a stack.jpg",
+    "page": "https://commons.wikimedia.org/?curid=61662738",
+    "license": "CC0",
+    "file": "library/vegetables/lettuce.jpg"
+  },
+  "vegetables/zucchini": {
+    "title": "File:Harvest (20130920-OC-LSC-0512).jpg",
+    "page": "https://commons.wikimedia.org/?curid=185335509",
+    "license": "Public domain",
+    "file": "library/vegetables/zucchini.jpg"
+  },
+  "vegetables/pumpkin": {
+    "title": "File:2016 USDA Farmers Market (20161021-AMS-LSC-0035).jpg",
+    "page": "https://commons.wikimedia.org/?curid=185097277",
+    "license": "Public domain",
+    "file": "library/vegetables/pumpkin.jpg"
+  },
+  "vegetables/corn": {
+    "title": "File:20180828-USDA-OC-PSD-0123 Agriculture in the United States.jpg",
+    "page": "https://commons.wikimedia.org/?curid=171286967",
+    "license": "Public domain",
+    "file": "library/vegetables/corn.jpg"
+  },
+  "vegetables/green-beans": {
+    "title": "File:Green Beans (Alabama Extension).jpg",
+    "page": "https://commons.wikimedia.org/?curid=102658376",
+    "license": "CC0",
+    "file": "library/vegetables/green-beans.jpg"
+  },
+  "vegetables/peas": {
+    "title": "File:NCI peas in pod.jpg",
+    "page": "https://commons.wikimedia.org/?curid=138041",
+    "license": "Public domain",
+    "file": "library/vegetables/peas.jpg"
+  },
+  "vegetables/radish": {
+    "title": "File:Korean radish - Massachusetts.jpg",
+    "page": "https://commons.wikimedia.org/?curid=164898192",
+    "license": "CC0",
+    "file": "library/vegetables/radish.jpg"
+  },
+  "vegetables/broccoli": {
+    "title": "File:Broccoli (20240611).jpg",
+    "page": "https://commons.wikimedia.org/?curid=153006357",
+    "license": "CC0",
+    "file": "library/vegetables/broccoli.jpg"
+  },
+  "flowers/morning-glory": {
+    "title": "File:Beach Morning Glory - Ipomoea pes-caprae.jpg",
+    "page": "https://commons.wikimedia.org/?curid=5080321",
+    "license": "Public domain",
+    "file": "library/flowers/morning-glory.jpg"
+  }
+}
