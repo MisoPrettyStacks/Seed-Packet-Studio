@@ -11,30 +11,27 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root{
-  --ink:#4a3f35; --accent:#7a8b5c; --accent-d:#5f6f45; --paper:#f6f1e3;
+  --ink:#111111; --accent:#7a8b5c; --accent-d:#5f6f45; --paper:#ffffff;
   --gold:#c9a227; --rose:#c98a94;
 }
 *{box-sizing:border-box}
 body{
   margin:0; font-family:'Jost',sans-serif; color:var(--ink);
-  background:
-    radial-gradient(circle at 20% 10%, #fbf7ec 0, transparent 40%),
-    radial-gradient(circle at 85% 90%, #f3ecd9 0, transparent 45%),
-    var(--paper);
+  background:#fff;
   min-height:100vh; display:flex; flex-direction:column;
 }
 /* ---------- top bar ---------- */
 header.topbar{
   display:flex; align-items:center; gap:12px; flex-wrap:wrap;
-  padding:10px 18px; background:#fffdf6; border-bottom:2px solid #e7dcc2;
+  padding:10px 18px; background:#fff; border-bottom:2px solid #e5e5e5;
   position:sticky; top:0; z-index:200;
 }
 .brand{font-family:'Cormorant Garamond',serif; font-weight:700; font-size:22px; letter-spacing:1px; margin-right:6px;}
-.brand small{font-family:'Jost'; font-weight:400; font-size:12px; letter-spacing:2px; color:#8a7a5f; display:block; margin-top:-4px;}
+.brand small{font-family:'Jost'; font-weight:400; font-size:12px; letter-spacing:2px; color:#555; display:block; margin-top:-4px;}
 .tabs{display:flex; gap:6px; margin-right:auto;}
-.tab{border:1.5px solid #d9cba6; background:#fff; border-radius:999px; padding:7px 18px; cursor:pointer; font-family:'Jost'; font-size:13px; letter-spacing:1.5px; color:var(--ink);}
+.tab{border:1.5px solid #cfcfcf; background:#fff; border-radius:999px; padding:7px 18px; cursor:pointer; font-family:'Jost'; font-size:13px; letter-spacing:1.5px; color:var(--ink);}
 .tab.active{background:var(--accent); border-color:var(--accent); color:#fff;}
-.btn{border:1.5px solid #d9cba6; background:#fff; border-radius:10px; padding:8px 14px; cursor:pointer; font-family:'Jost'; font-size:13px; color:var(--ink); display:inline-flex; align-items:center; gap:6px;}
+.btn{border:1.5px solid #cfcfcf; background:#fff; border-radius:10px; padding:8px 14px; cursor:pointer; font-family:'Jost'; font-size:13px; color:var(--ink); display:inline-flex; align-items:center; gap:6px;}
 .btn:hover{border-color:var(--accent); }
 .btn.primary{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:500;}
 .btn.primary:hover{background:var(--accent-d);}
@@ -42,45 +39,55 @@ header.topbar{
 select.btn{padding:8px 10px;}
 /* ---------- replace banner ---------- */
 #replaceBar{
-  background:#fff8e6; border-bottom:2px dashed var(--gold); color:#7a5f14;
+  background:#ffffff; border-bottom:2px dashed #999; color:#111;
   padding:8px 18px; font-size:13.5px; display:flex; gap:10px; align-items:center; justify-content:center;
 }
 #replaceBar[hidden]{display:none;}
 /* ---------- layout ---------- */
 main{flex:1; display:flex; min-height:0;}
 aside#libraryPanel{
-  width:288px; flex-shrink:0; background:#fffdf6; border-right:2px solid #e7dcc2;
+  width:288px; flex-shrink:0; background:#fff; border-right:2px solid #e5e5e5;
   padding:14px; overflow-y:auto; max-height:calc(100vh - 60px); position:sticky; top:60px;
 }
 aside#libraryPanel.hidden{display:none;}
 .lib-tabs{display:flex; gap:6px; margin:10px 0;}
-.lib-tab{flex:1; border:1.5px solid #d9cba6; background:#fff; border-radius:8px; padding:7px 4px; cursor:pointer; font-size:12.5px; letter-spacing:1px; font-family:'Jost';}
+.lib-tab{flex:1; border:1.5px solid #cfcfcf; background:#fff; border-radius:8px; padding:7px 4px; cursor:pointer; font-size:12.5px; letter-spacing:1px; font-family:'Jost';}
 .lib-tab.active{background:var(--ink); color:#fff; border-color:var(--ink);}
 .thumb-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;}
-.thumb{border:2px solid #eee3c8; border-radius:10px; overflow:hidden; cursor:pointer; background:#fff; padding:0; font-family:'Jost';}
+.thumb{border:2px solid #e2e2e2; border-radius:10px; overflow:hidden; cursor:pointer; background:#fff; padding:0; font-family:'Jost';}
 .thumb:hover{border-color:var(--accent); transform:translateY(-1px);}
 .thumb img{width:100%; height:64px; object-fit:cover; display:block;}
-.thumb figcaption{font-size:10.5px; padding:4px 2px; text-align:center; color:#6b5d49; line-height:1.2;}
-.lib-note{font-size:11px; color:#9a8a6d; margin-top:12px; line-height:1.5;}
+.thumb figcaption{font-size:10.5px; padding:4px 2px; text-align:center; color:#333; line-height:1.2;}
+.lib-note{font-size:11px; color:#666; margin-top:12px; line-height:1.5;}
 section#stage{flex:1; display:flex; flex-direction:column; align-items:center; padding:26px 16px 40px; min-width:0;}
-.hint{font-size:12.5px; color:#9a8a6d; margin-top:14px; text-align:center; max-width:520px; line-height:1.6;}
+.hint{font-size:12.5px; color:#666; margin-top:14px; text-align:center; max-width:520px; line-height:1.6;}
 /* ---------- properties panel ---------- */
 aside#propsPanel{
-  width:264px; flex-shrink:0; background:#fffdf6; border-left:2px solid #e7dcc2;
+  width:264px; flex-shrink:0; background:#fff; border-left:2px solid #e5e5e5;
   padding:14px; overflow-y:auto; max-height:calc(100vh - 60px); position:sticky; top:60px;
 }
 aside#propsPanel h3, aside#libraryPanel h3{font-family:'Cormorant Garamond',serif; font-size:19px; margin:2px 0 8px; letter-spacing:.5px;}
-.prop-group{border-top:1px dashed #e0d3b3; padding:10px 0;}
-.prop-group label{display:block; font-size:11.5px; letter-spacing:1.5px; color:#8a7a5f; margin:8px 0 4px;}
+.prop-group{border-top:1px dashed #e2e2e2; padding:10px 0;}
+.prop-group label{display:block; font-size:11.5px; letter-spacing:1.5px; color:#333; margin:8px 0 4px;}
 .prop-group select, .prop-group input[type=color]{width:100%;}
-.prop-group select{border:1.5px solid #d9cba6; border-radius:8px; padding:7px; font-family:'Jost'; font-size:13px; background:#fff;}
+.prop-group select{border:1.5px solid #cfcfcf; border-radius:8px; padding:7px; font-family:'Jost'; font-size:13px; background:#fff;}
 .prop-row{display:flex; gap:6px; flex-wrap:wrap;}
 .prop-row .btn{flex:1; justify-content:center; padding:7px 6px; font-size:12.5px;}
 .prop-row .btn.on{background:var(--ink); color:#fff; border-color:var(--ink);}
 input[type=range]{width:100%; accent-color:var(--accent);}
-input[type=color]{height:36px; border:1.5px solid #d9cba6; border-radius:8px; background:#fff; padding:2px;}
-.size-val{font-size:12px; color:#8a7a5f;}
-#noSel{font-size:13px; color:#9a8a6d; line-height:1.6;}
+input[type=color]{height:36px; border:1.5px solid #cfcfcf; border-radius:8px; background:#fff; padding:2px;}
+.swatches{display:flex; flex-wrap:wrap; gap:7px; margin:2px 0 8px;}
+.swatches button{width:28px; height:28px; border-radius:50%; border:2px solid rgba(120,100,70,.28); cursor:pointer; padding:0; transition:transform .12s;}
+.swatches button:hover{transform:scale(1.15);}
+.swatches button.on{border-color:var(--ink); box-shadow:0 0 0 2px #fff,0 0 0 4px var(--ink);}
+.swatches button.none{
+  background:
+    linear-gradient(45deg,#c9c9c9 25%,transparent 25%,transparent 75%,#c9c9c9 75%),
+    linear-gradient(45deg,#c9c9c9 25%,#ffffff 25%,#ffffff 75%,#c9c9c9 75%);
+  background-size:9px 9px; background-position:0 0,4.5px 4.5px;
+}
+.size-val{font-size:12px; color:#555;}
+#noSel{font-size:13px; color:#666; line-height:1.6;}
 /* ================= PACKET CARDS (vintage hollyhock design) ================= */
 .canvas-wrap{width:100%; display:flex; justify-content:center;}
 .card{
@@ -127,14 +134,14 @@ input[type=color]{height:36px; border:1.5px solid #d9cba6; border-radius:8px; ba
 .sticker .tools{position:absolute; top:-14px; right:-8px; display:none; gap:4px; z-index:20;}
 .sticker.selected .tools{display:flex;}
 .sticker .tools button{
-  width:26px; height:26px; border-radius:50%; border:1.5px solid #b7a67f; background:#fffdf6;
+  width:26px; height:26px; border-radius:50%; border:1.5px solid #999; background:#fff;
   cursor:pointer; font-size:12px; line-height:1; padding:0; display:flex; align-items:center; justify-content:center;
   box-shadow:0 2px 6px rgba(0,0,0,.2);
 }
 .sticker .tools button:hover{background:var(--accent); color:#fff; border-color:var(--accent);}
 .sticker .resize{
   position:absolute; right:-9px; bottom:-9px; width:20px; height:20px; cursor:nwse-resize; display:none; z-index:20;
-  background:#fffdf6; border:2px solid var(--accent); border-radius:50%;
+  background:#fff; border:2px solid var(--accent); border-radius:50%;
 }
 .sticker .resize::after{content:''; position:absolute; inset:4px; border-right:2px solid var(--accent); border-bottom:2px solid var(--accent);}
 .sticker.selected .resize{display:block;}
@@ -285,6 +292,14 @@ input[type=color]{height:36px; border:1.5px solid #d9cba6; border-radius:8px; ba
 
   <aside id="propsPanel">
     <h3>Selected</h3>
+    <div class="prop-group" id="bgGroup">
+      <label>PACKET BACKGROUND</label>
+      <div class="swatches" id="bgSwatches"></div>
+      <div class="prop-row">
+        <input type="color" id="bgColor" value="#fbf6ea" title="Custom background color">
+        <button class="btn" id="bgDefault" title="Back to the original cream">↺ Cream</button>
+      </div>
+    </div>
     <div id="noSel">Click any text or photo on the packet to edit it here.<br><br>💡 Click a library photo to drop it onto the packet as a new picture.</div>
     <div id="textProps" hidden>
       <div class="prop-group">
@@ -293,6 +308,7 @@ input[type=color]{height:36px; border:1.5px solid #d9cba6; border-radius:8px; ba
         <label>SIZE <span class="size-val" id="fontSizeVal"></span></label>
         <input type="range" id="fontSize" min="1" max="14" step="0.25" value="5">
         <label>COLOR</label>
+        <div class="swatches" id="fontSwatches"></div>
         <input type="color" id="fontColor" value="#5b4a3a">
         <label>STYLE &amp; ALIGN</label>
         <div class="prop-row">
@@ -361,9 +377,9 @@ const LIB = {
   ]
 };
 const FONT_GROUPS = [
-  ["Script & playful", ["Dancing Script","Parisienne","Great Vibes","Allura","Pacifico","Lobster","Caveat","Satisfy","Shadows Into Light","Indie Flower","Permanent Marker","Baloo 2","Fredoka","Quicksand","Chewy","Gochi Hand","Rubik Bubbles"]],
-  ["Serif", ["Cormorant Garamond","Playfair Display","Lora","Merriweather"]],
-  ["Sans", ["Jost","Montserrat","Poppins","Nunito","Raleway","Inter"]]
+  ["Script & playful", ["Dancing Script","Parisienne","Great Vibes","Allura","Pacifico","Lobster","Caveat","Satisfy","Shadows Into Light","Indie Flower","Permanent Marker","Baloo 2","Fredoka","Quicksand","Chewy","Gochi Hand","Rubik Bubbles","Pinyon Script","Alex Brush","Tangerine","Sacramento","Cookie","Arizonia","Rouge Script","Kalam","Shrikhand","Titan One","Bungee"]],
+  ["Serif", ["Cormorant Garamond","Playfair Display","Lora","Merriweather","DM Serif Display","Fraunces","Libre Baskerville","EB Garamond"]],
+  ["Sans", ["Jost","Montserrat","Poppins","Nunito","Raleway","Inter","DM Sans","Outfit","Josefin Sans","Work Sans","Comfortaa","Varela Round"]]
 ];
 const ALL_FONTS = FONT_GROUPS.flatMap(g=>g[1]);
 const loadedFonts = new Set(["Cormorant Garamond","Jost"]);
@@ -399,6 +415,7 @@ document.querySelectorAll(".tab").forEach(btn=>{
     frontCard.hidden=currentTab!=="front";
     backCard.hidden=currentTab!=="back";
     clearSelection();
+    refreshBgUI();
   };
 });
 document.getElementById("libToggle").onclick=()=>document.getElementById("libraryPanel").classList.toggle("hidden");
@@ -581,6 +598,7 @@ function syncTextPanel(el){
   document.getElementById("fontSize").value=v;
   document.getElementById("fontSizeVal").textContent=v.toFixed(1).replace(/\.0$/,"")+" cqw";
   document.getElementById("fontColor").value=rgbToHex(el.style.color||cs.color);
+  markSwatch(document.getElementById("fontSwatches"),document.getElementById("fontColor").value);
   document.getElementById("boldBtn").classList.toggle("on",(el.style.fontWeight||cs.fontWeight)==="700"||parseInt(cs.fontWeight)>=600);
   document.getElementById("italicBtn").classList.toggle("on",(el.style.fontStyle||cs.fontStyle)==="italic");
   document.querySelectorAll("[data-align]").forEach(b=>b.classList.toggle("on",(el.style.textAlign||cs.textAlign)===b.dataset.align));
@@ -604,6 +622,49 @@ document.getElementById("fontColor").addEventListener("input",e=>{
   if(selected?.type!=="text")return;
   selected.el.style.color=e.target.value; saveSoon();
 });
+/* ================= color swatches + packet background ================= */
+const FONT_COLORS=["#5b4a3a","#2b2b2b","#000000","#8a7a5f","#b76e79","#d94f70","#e8a0b4","#a34d6e","#7b4b94","#b388eb","#4a6fa5","#7fb3d5","#2e7d6f","#7dbe9a","#6a994e","#c98a2d","#e9c46a","#ffffff"];
+const BG_COLORS=["#fbf6ea","#ffffff","#fdf3f0","#fde8ef","#f9dbe7","#f3e8ff","#e6def7","#dde8f7","#d9efe6","#eef3da","#fdf6e0","#f7ead7","#f1e2cf","#e9d6bd","#dcc39e","#c9a97e","#a98f6f","#7a6a55","#4a4238","#2b2b2b"];
+function buildSwatches(el,colors,onPick){
+  colors.forEach(c=>{
+    const b=document.createElement("button");
+    b.type="button"; b.style.background=c; b.title=c; b.dataset.color=c;
+    b.onclick=()=>onPick(c,b);
+    el.appendChild(b);
+  });
+}
+function markSwatch(el,color){
+  const lc=(color||"").toLowerCase();
+  el.querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.color.toLowerCase()===lc));
+}
+buildSwatches(document.getElementById("fontSwatches"),FONT_COLORS,c=>{
+  const inp=document.getElementById("fontColor");
+  inp.value=c; inp.dispatchEvent(new Event("input",{bubbles:true}));
+  markSwatch(document.getElementById("fontSwatches"),c);
+});
+function cardBgHex(card){
+  const cs=getComputedStyle(card).backgroundColor;
+  const m=/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?/.exec(cs||"");
+  if(m && m[4]!==undefined && parseFloat(m[4])===0) return "transparent";
+  return rgbToHex(cs);
+}
+function refreshBgUI(){
+  const hex=cardBgHex(activeCard());
+  document.getElementById("bgColor").value=(hex==="transparent")?"#ffffff":hex;
+  markSwatch(document.getElementById("bgSwatches"),hex);
+}
+function setCardBg(color){
+  activeCard().style.backgroundColor=color;
+  refreshBgUI(); saveSoon();
+}
+const bgSw=document.getElementById("bgSwatches");
+const noneB=document.createElement("button");
+noneB.type="button"; noneB.className="none"; noneB.title="No background (transparent)"; noneB.dataset.color="transparent";
+noneB.onclick=()=>setCardBg("transparent");
+bgSw.appendChild(noneB);
+buildSwatches(bgSw,BG_COLORS,c=>setCardBg(c));
+document.getElementById("bgColor").addEventListener("input",e=>setCardBg(e.target.value));
+document.getElementById("bgDefault").onclick=()=>setCardBg("#fbf6ea");
 document.getElementById("boldBtn").onclick=()=>{
   if(selected?.type!=="text")return;
   const el=selected.el, on=getComputedStyle(el).fontWeight==="700"||parseInt(getComputedStyle(el).fontWeight)>=600;
@@ -702,6 +763,7 @@ let saveT=null;
 function saveSoon(){ clearTimeout(saveT); saveT=setTimeout(save,400); }
 function cardData(card){
   return {
+    bg:card.style.backgroundColor||"",
     texts:[...card.querySelectorAll(".editable")].map(el=>({
       html:el.innerHTML, font:el.style.fontFamily||"", size:el.style.fontSize||"",
       color:el.style.color||"", weight:el.style.fontWeight||"", style:el.style.fontStyle||"",
@@ -734,6 +796,7 @@ function load(){
   [["frontCard",d.front],["backCard",d.back]].forEach(([id,cd])=>{
     if(!cd)return;
     const card=document.getElementById(id);
+    if(cd.bg)card.style.backgroundColor=cd.bg;
     card.querySelectorAll(".sticker").forEach(s=>s.remove());
     card.querySelectorAll(".editable.textbox").forEach(t=>t.remove());
     const templates=[...card.querySelectorAll(".editable")];
@@ -764,6 +827,7 @@ document.getElementById("resetLink").onclick=e=>{
   }
 };
 load();
+refreshBgUI();
 </script>
 </body>
 </html>
