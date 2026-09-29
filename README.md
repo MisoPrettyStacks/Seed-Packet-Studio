@@ -46,4 +46,7 @@ The print stylesheet targets the standard seed packet envelope: **3.25 in × 4.5
 
 ---
 
-Made with 💖 by [@MisoPrettyStacks](https://github.com/MisoPrettyStacks)
+Made with 💖 by:
+[@MisoPrettyStacks](https://github.com/MisoPrettyStacks)
+
+@IGotGlitterOnMe on X
