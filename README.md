@@ -4,13 +4,14 @@ A cute, canvas-style **seed packet designer** that runs entirely in your browser
 
 **Live demo:** https://misoprettystacks.github.io/Seed-Packet-Studio/
 
-## What a finished packet looks like
-
-![Sample seed packet designed in the studio](screenshots/sample-packet.png)
 
 ## What the studio looks like
 
-![Seed Packet Studio editor](screenshots/studio.png)
+<img width="1885" height="837" alt="SEED PACKET STUDIO" src="https://github.com/user-attachments/assets/e8fa50c9-12fe-4e92-812f-89bcc84552b1" />
+
+## What a finished packet looks like
+
+<img width="1707" height="942" alt="packet" src="https://github.com/user-attachments/assets/f76fc956-a0e9-410f-a691-4aa4e1b451fd" />
 
 ## Features
 
