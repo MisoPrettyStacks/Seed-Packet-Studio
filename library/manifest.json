@@ -191,5 +191,125 @@
     "page": "https://commons.wikimedia.org/?curid=5080321",
     "license": "Public domain",
     "file": "library/flowers/morning-glory.jpg"
+  },
+  "clipart/vintage-rose-alba": {
+    "title": "File:Rosa alba foliacea, Les Roses III, 1824, Redout\u00e9.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File%3ARosa_alba_foliacea%2C_Les_Roses_III%2C_1824%2C_Redout%C3%A9.jpg",
+    "license": "Public domain",
+    "file": "library/clipart/vintage-rose-alba.jpg"
+  },
+  "clipart/vintage-rose-royal": {
+    "title": "File:Redoute - Rosa gallica regalis.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File%3ARedoute_-_Rosa_gallica_regalis.jpg",
+    "license": "Public domain",
+    "file": "library/clipart/vintage-rose-royal.jpg"
+  },
+  "clipart/vintage-rose-cabbage": {
+    "title": "File:Redoute - Rosa centifolia foliacea.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File%3ARedoute_-_Rosa_centifolia_foliacea.jpg",
+    "license": "Public domain",
+    "file": "library/clipart/vintage-rose-cabbage.jpg"
+  },
+  "clipart/vintage-rose-purple": {
+    "title": "File:Redoute - Rosa gallica purpuro-violacea magna.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File%3ARedoute_-_Rosa_gallica_purpuro-violacea_magna.jpg",
+    "license": "Public domain",
+    "file": "library/clipart/vintage-rose-purple.jpg"
+  },
+  "clipart/vintage-rose-bourbon": {
+    "title": "File:Pierre-Joseph Redout\u00e9 - Rosa Canina Burboniana.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File%3APierre-Joseph_Redout%C3%A9_-_Rosa_Canina_Burboniana.jpg",
+    "license": "Public domain",
+    "file": "library/clipart/vintage-rose-bourbon.jpg"
+  },
+  "clipart/vintage-rose-pontiana": {
+    "title": "File:Redoute - Rosa gallica pontiana.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File%3ARedoute_-_Rosa_gallica_pontiana.jpg",
+    "license": "Public domain",
+    "file": "library/clipart/vintage-rose-pontiana.jpg"
+  },
+  "clipart/vintage-rose-inermis": {
+    "title": "File:Redoute-rosa inermis.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File%3ARedoute-rosa_inermis.jpg",
+    "license": "Public domain",
+    "file": "library/clipart/vintage-rose-inermis.jpg"
+  },
+  "clipart/vintage-rose-aurelia": {
+    "title": "File:Rosa gallica aurelianensis.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File%3ARosa_gallica_aurelianensis.jpg",
+    "license": "Public domain",
+    "file": "library/clipart/vintage-rose-aurelia.jpg"
+  },
+  "clipart/vintage-rose-indica": {
+    "title": "File:Rosa indica acuminata.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File%3ARosa_indica_acuminata.jpg",
+    "license": "Public domain",
+    "file": "library/clipart/vintage-rose-indica.jpg"
+  },
+  "clipart/vintage-iris": {
+    "title": "File:De Gouy, after Pierre- Joseph Redout\u00e9 - Dalmatian Iris (Iris pallida), plate 366, vol. 7 of Pierre-Joseph Redout\u00e9, \"Les Liliac\u00e9es\", Paris 18... - Google Art Project.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File%3ADe_Gouy%2C_after_Pierre-_Joseph_Redout%C3%A9_-_Dalmatian_Iris_%28Iris_pallida%29%2C_plate_366%2C_vol._7_of_Pierre-Joseph_Redout%C3%A9%2C_%22Les_Liliac%C3%A9es%22%2C_Paris_18..._-_Google_Art_Project.jpg",
+    "license": "Public domain",
+    "file": "library/clipart/vintage-iris.jpg"
+  },
+  "clipart/vintage-tulip": {
+    "title": "File:Tulipa suaveolens in Les liliacees.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File%3ATulipa_suaveolens_in_Les_liliacees.jpg",
+    "license": "Public domain",
+    "file": "library/clipart/vintage-tulip.jpg"
+  },
+  "clipart/vintage-lily": {
+    "title": "File:Lilium martagon - Les liliac\u00e9es, vol. 3 - t. 146.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File%3ALilium_martagon_-_Les_liliac%C3%A9es%2C_vol._3_-_t._146.jpg",
+    "license": "Public domain",
+    "file": "library/clipart/vintage-lily.jpg"
+  },
+  "clipart/vintage-daffodil": {
+    "title": "File:Narcissus pseudonarcissus - Les liliac\u00e9es - vol. 3 - t. 158 - clean.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File%3ANarcissus_pseudonarcissus_-_Les_liliac%C3%A9es_-_vol._3_-_t._158_-_clean.jpg",
+    "license": "Public domain",
+    "file": "library/clipart/vintage-daffodil.jpg"
+  },
+  "clipart/vintage-lily-pyrenean": {
+    "title": "File:Lilium pyrenaicum - Les liliac\u00e9es - vol. 3 - t. 145 - clean.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File%3ALilium_pyrenaicum_-_Les_liliac%C3%A9es_-_vol._3_-_t._145_-_clean.jpg",
+    "license": "Public domain",
+    "file": "library/clipart/vintage-lily-pyrenean.jpg"
+  },
+  "clipart/vintage-pineapple-lily": {
+    "title": "File:Pierre-Joseph Redout\u00e9 - Eucomis Punctata, Plate 208 from Les Liliac\u00e9es, volume 4, Paris, 1802-1816 - B2012.33.4 - Yale Center for British Art.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File%3APierre-Joseph_Redout%C3%A9_-_Eucomis_Punctata%2C_Plate_208_from_Les_Liliac%C3%A9es%2C_volume_4%2C_Paris%2C_1802-1816_-_B2012.33.4_-_Yale_Center_for_British_Art.jpg",
+    "license": "CC0",
+    "file": "library/clipart/vintage-pineapple-lily.jpg"
+  },
+  "clipart/peony-illustration": {
+    "title": "File:Peony (PSF).png",
+    "page": "https://commons.wikimedia.org/wiki/File%3APeony_%28PSF%29.png",
+    "license": "Public domain",
+    "file": "library/clipart/peony-illustration.jpg"
+  },
+  "clipart/tree-peony": {
+    "title": "File:Tree Peony-Favourite Flowers Garden Greenhouse-1-0003-1.png",
+    "page": "https://commons.wikimedia.org/wiki/File%3ATree_Peony-Favourite_Flowers_Garden_Greenhouse-1-0003-1.png",
+    "license": "Public domain",
+    "file": "library/clipart/tree-peony.jpg"
+  },
+  "clipart/peony-woodblock": {
+    "title": "File:Peony by Shibata Zeshin from Comparing Flowers, Volume 6.JPG",
+    "page": "https://commons.wikimedia.org/wiki/File%3APeony_by_Shibata_Zeshin_from_Comparing_Flowers%2C_Volume_6.JPG",
+    "license": "Public domain",
+    "file": "library/clipart/peony-woodblock.jpg"
+  },
+  "clipart/vintage-campion": {
+    "title": "File:Campion redoute.JPG",
+    "page": "https://commons.wikimedia.org/wiki/File%3ACampion_redoute.JPG",
+    "license": "Public domain",
+    "file": "library/clipart/vintage-campion.jpg"
+  },
+  "clipart/vintage-anemone": {
+    "title": "File:Anemone simple. Redout\u00e9, P.J., Choix des plus belles fleurs et des plus beaux fruits t. 107 (1827).tiff",
+    "page": "https://commons.wikimedia.org/wiki/File%3AAnemone_simple._Redout%C3%A9%2C_P.J.%2C_Choix_des_plus_belles_fleurs_et_des_plus_beaux_fruits_t._107_%281827%29.tiff",
+    "license": "Public domain",
+    "file": "library/clipart/vintage-anemone.jpg"
   }
 }

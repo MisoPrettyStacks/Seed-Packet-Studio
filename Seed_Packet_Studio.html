@@ -197,9 +197,10 @@ input[type=color]{height:36px; border:1.5px solid #cfcfcf; border-radius:8px; ba
     <div class="lib-tabs">
       <button class="lib-tab active" data-lib="flowers">🌸 flowers <span id="flowerCount"></span></button>
       <button class="lib-tab" data-lib="vegetables">🥕 veggies <span id="vegCount"></span></button>
+      <button class="lib-tab" data-lib="clipart">🎨 clip art <span id="clipCount"></span></button>
     </div>
     <div class="thumb-grid" id="thumbGrid"></div>
-    <p class="lib-note">All library photos are public domain or CC0 — free for commercial use, no attribution needed. Tip: use <b>Upload</b> to add photos of your own flowers; they work everywhere in the editor.</p>
+    <p class="lib-note">All library photos & clip art are public domain or CC0 — free for commercial use, no attribution needed. Tip: use <b>Upload</b> to add photos of your own flowers; they work everywhere in the editor.</p>
   </aside>
 
   <section id="stage">
@@ -374,6 +375,13 @@ const LIB = {
     ["Pumpkin","library/vegetables/pumpkin.jpg"],["Corn","library/vegetables/corn.jpg"],
     ["Green Beans","library/vegetables/green-beans.jpg"],["Peas","library/vegetables/peas.jpg"],
     ["Radish","library/vegetables/radish.jpg"],["Broccoli","library/vegetables/broccoli.jpg"]
+  ],
+  clipart: [
+    ["Alba Rose","library/clipart/vintage-rose-alba.jpg"],["Royal Rose","library/clipart/vintage-rose-royal.jpg"],["Cabbage Rose","library/clipart/vintage-rose-cabbage.jpg"],["Purple Rose","library/clipart/vintage-rose-purple.jpg"],
+["Bourbon Rose","library/clipart/vintage-rose-bourbon.jpg"],["Pontiana Rose","library/clipart/vintage-rose-pontiana.jpg"],["Thornless Rose","library/clipart/vintage-rose-inermis.jpg"],["Aurelia Rose","library/clipart/vintage-rose-aurelia.jpg"],
+["Indica Rose","library/clipart/vintage-rose-indica.jpg"],["Dalmatian Iris","library/clipart/vintage-iris.jpg"],["Wild Tulip","library/clipart/vintage-tulip.jpg"],["Turk's Cap Lily","library/clipart/vintage-lily.jpg"],
+["Wild Daffodil","library/clipart/vintage-daffodil.jpg"],["Pyrenean Lily","library/clipart/vintage-lily-pyrenean.jpg"],["Pineapple Lily","library/clipart/vintage-pineapple-lily.jpg"],["Peony Study","library/clipart/peony-illustration.jpg"],
+["Tree Peony","library/clipart/tree-peony.jpg"],["Peony Woodblock","library/clipart/peony-woodblock.jpg"],["Campion","library/clipart/vintage-campion.jpg"],["Anemone","library/clipart/vintage-anemone.jpg"]
   ]
 };
 const FONT_GROUPS = [
@@ -424,6 +432,7 @@ document.getElementById("libToggle").onclick=()=>document.getElementById("librar
 const thumbGrid=document.getElementById("thumbGrid");
 document.getElementById("flowerCount").textContent="("+LIB.flowers.length+")";
 document.getElementById("vegCount").textContent="("+LIB.vegetables.length+")";
+document.getElementById("clipCount").textContent="("+LIB.clipart.length+")";
 function renderLibrary(kind){
   thumbGrid.innerHTML="";
   LIB[kind].forEach(([name,src])=>{
